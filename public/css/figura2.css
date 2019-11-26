@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Lobster Two', cursive;
+}
+
+header {
+    width: 100%;
+    height: 15%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 100;
+    background: linear-gradient(to bottom, #33ccff 0%, #ffff99 100%);
+}
+
+header h1 {
+    padding: 2% 0 2% 0;
+}
+
+header a {
+    padding-bottom: 2%;
+    color: brown;
+}
+
+.titulo {
+    display: flex;
+    justify-content: center;
+}
+
+.enlaces {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main {
+    margin: 10% 20% 0 20%;
+}
+
+body {
+    background: #ffff99;
+}
+
+.pagina {
+    padding-bottom: 5%;
+}
+
+.dato {
+    display: flex;
+}
+
+.tag {
+    width: 5%;
+    flex-grow: 2;
+    text-align: start;
+    padding-left: 5%;
+    padding-right: 2%;
+}
+
+.input {
+    flex-grow: 1;
+}
+
+.input input {
+    width: 95%;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    background-color: #33ccff;
+    border-radius: 15px;
+    padding-bottom: 2%;
+}
+
+.login {
+    padding: 0 3% 0 3%;
+    align-self: center;
+}
+
+span {
+    padding-right: 45%;
+}
+
+form div {
+    padding: 2% 0 2% 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+main a {
+    background-color: black;
+    color: white;
+    padding: 0 3% 0 3%;
+    border-radius: 5px;
+}
