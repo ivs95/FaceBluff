@@ -29,7 +29,7 @@ class DAOUsuario {
             }
         })
     }
-    updateUser(usuario){
+    updateUser(usuario, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -51,7 +51,33 @@ class DAOUsuario {
             }
         })
     }
-    readByName(name){
+    
+    readByEmail(email, callback){
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "SELECT email,nombre,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE email=? ";
+                conexion.query(sql, email, function (err, resultado) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    }
+                    else if(resultado) {
+                        callback(null,resultado);
+                    }
+                    else {
+                        callback(new Error("No existe el usuario"));
+                    }
+                    conexion.release();
+                })
+            }
+        })
+
+    }
+
+    readByName(name, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -64,9 +90,7 @@ class DAOUsuario {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
                     else if(resultado) {
-                        
                         callback(null,resultado);
-                        return resultado;
                     }
                     else {
                         callback(new Error("No existe el usuario"));
@@ -75,9 +99,9 @@ class DAOUsuario {
                 })
             }
         })
-
     }
-    increasePoints(id, puntuacion){
+
+    increasePoints(id, puntuacion, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
