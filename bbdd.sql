@@ -20,7 +20,7 @@ create table peticion {
   FOREIGN KEY (idDestino) REFERENCES usuario(idUsuario)
 };
 
-create table pregunta {
+create table preguntas {
   idPregunta int NOT NULL UNIQUE AUTO_INCREMENT,
   idUsuario int  NOT NULL ,
   enunciado LONGTEXT NOT NULL,
