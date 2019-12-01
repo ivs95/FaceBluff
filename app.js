@@ -67,6 +67,7 @@ app.get("/users/login", function (request, response, next) {
 
 app.post("/users/login", function (request, response, next) {
     let email = request.body.email;
+
     daoU.readByEmail(email, function cb_readUsuario(err, result) {
         if (err) {
             console.log(err.message);
@@ -75,6 +76,7 @@ app.post("/users/login", function (request, response, next) {
                 //Login correcto
                 //Cambiar el atributo fecha de usuario por su edad antes de guardarlo en la sesion
                 request.session.usuario = result;
+                app.locals.currentUser= result;
                 response.redirect("/users/my_profile");
 
             }
@@ -214,10 +216,10 @@ app.get("/finish/:taskId", function (request, response, next) {
 });
 
 
-app.get("/preguntas", function (request, response, next) {
+app.get("/question", function (request, response, next) {
     //Leer variable taskList con dao del usuario que se ha registrado
     
-    daoP.read5Random(function cb_markTaskDone(err, result) {
+    daoP.read5Random(function cb_read5Random(err, result) {
         if (err) {
             console.log(err.message);
         }
@@ -226,7 +228,31 @@ app.get("/preguntas", function (request, response, next) {
             response.render("figura6",listaPreguntas);
         }
     });
+
 });
+
+app.get("/question/:idPregunta",function (request, response, next) {
+    //Leer variable taskList con dao del usuario que se ha registrado
+    daoP.readPregunta(request.params.idPregunta,function cb_readPregunta(err, result) {
+        if (err) {
+            console.log(err.message);
+        }
+        else {
+            let listaPreguntas = result; 
+            response.render("figura6",listaPreguntas);
+        }
+    });
+
+});
+
+
+//
+//app.post("/question/create")
+//
+//
+//
+//
+//
 
 
 

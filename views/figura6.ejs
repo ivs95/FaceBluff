@@ -19,7 +19,7 @@
             <a href="/users/friends">Amigos</a>
             <a href="">Preguntas</a>
             <a href="/users/login">Desconectar</a>
-            <a href="">Puntos</a>
+            <a href=""> <%= currentUser.puntuacion %></a>
         </div>
     </header>
     <main>
@@ -31,7 +31,7 @@
             <div class="main">
                 <% for (var pregunta in listaPreguntas) { %>
                 <section class="pregunta">
-                    <p> <%= pregunta.enunciado %></p>
+                    <a href = <%=/question/ + pregunta.id% > class> <%= pregunta.enunciado %></a>
                 </section>
                 <% } %>
             </div>
