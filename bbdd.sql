@@ -1,6 +1,6 @@
 
 create table usuario {
-   idUsuario int NOT NULL UNIQUE AUTO_INCREMENT, 
+  idUsuario int NOT NULL UNIQUE AUTO_INCREMENT, 
   nombre varchar(255) NOT NULL ,
   email varchar(255) NOT NULL unique,
   contraseña varchar(255) NOT NULL,
@@ -10,14 +10,20 @@ create table usuario {
   Primary Key (idUsuario),
 };
 
+create table amigo {
+  emailUsuario varchar(255) NOT NULL,
+  emailAmigo varchar(255) NOT NULL,
+  Primary Key (emailUsuario, emailAmigo),
+  FOREIGN KEY (emailUsuario) REFERENCES usuario(email),
+  FOREIGN KEY (emailAmigo) REFERENCES usuario(email)
+};
+
 create table peticion {
-  idPeticion int NOT NULL UNIQUE AUTO_INCREMENT,
-  idOrigen int NOT NULL ,
-  idDestino int NOT NULL,
-  estado varchar(255) NOT NULL,
-  Primary Key (idPeticion),
-  FOREIGN KEY (idOrigen) REFERENCES usuario(idUsuario),
-  FOREIGN KEY (idDestino) REFERENCES usuario(idUsuario)
+  emailOrigen int NOT NULL ,
+  emailDestino int NOT NULL,
+  Primary Key (emailOrigen, emailDestino),
+  FOREIGN KEY (emailOrigen) REFERENCES usuario(email),
+  FOREIGN KEY (emailDestino) REFERENCES usuario(email)
 };
 
 create table preguntas {

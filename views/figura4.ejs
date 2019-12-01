@@ -15,28 +15,24 @@
             <h1>FaceBluff</h1>
         </div>
         <div class="enlaces">
-            <a href="">Perfil</a>
-            <a href="">Amigos</a>
+            <a href="/users/my_profile">Perfil</a>
+            <a href="/users/friends">Amigos</a>
             <a href="">Preguntas</a>
-            <a href="">Desconectar</a>
+            <a href="/users/login">Desconectar</a>
             <a href="">Puntos</a>
         </div>
     </header>
     <main>
         <div class="solicitudes bloque">
             <h2>Solicitudes de amistad</h2>
-            <div>
-                <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <span>Bruja Piruja</span>
-                <a href="" class="aceptaAmigo">Aceptar</a>
-                <a href="" class="rechazaAmigo">Rechazar</a>
-            </div>
-            <div>
-                <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <span>Brujo Pirujo</span>
-                <a href="" class="aceptaAmigo">Aceptar</a>
-                <a href="" class="rechazaAmigo">Rechazar</a>
-            </div>
+            <% for (var solicitud in listaSolicitudes) { %>
+                <div>
+                    <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
+                    <span> <%= solicitud.nombre %></span>
+                    <a href=<%=/users/friends/add_friend/ +solicitud.email %> class="aceptaAmigo">Aceptar</a>
+                    <a href=<%=/users/friends/refuse_friend/ +solicitud.email %> class="rechazaAmigo">Rechazar</a>
+                </div>
+                <% } %>
         </div>
         <div class="busqueda bloque">
             <h2>Búsqueda de amigos</h2>
@@ -46,14 +42,13 @@
         </div>
         <div class="amigos bloque">
             <h2>Mis amigos</h2>
+            <% for (var amigo in listaAmigos) { %>
             <div>
                 <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <span> Pepito Feliz</span>
+                <span> <%= amigo.nombre %></span>
             </div>
-            <div>
-                <img class="fotoAmigo dos" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <span> Juan Diablo</span>
-            </div>
+            <% } %>
+
         </div>
     </main>
 </body>
