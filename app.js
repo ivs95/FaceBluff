@@ -30,7 +30,7 @@ const pool = mysql.createPool(config.mysqlConfig);
 // Crear una instancia de DAOUsuarios
 const daoU = new DAOUsuarios(pool);
 const daoA = new DAOAmigo(pool);
-
+const daoP = new DAOPreguntas(pool);
 const ut = new utils();
 const ficherosEstaticos = path.join(__dirname, "public");
 
@@ -95,6 +95,9 @@ app.get("/users/my_profile", function (request, response, next) {
     response.render("figura3", { usuario: usuario });
 
 });
+
+
+
 
 app.get("/users/update_user", function (request, response, next) {
     let usuario = request.cookies.usuario;
@@ -211,6 +214,20 @@ app.get("/finish/:taskId", function (request, response, next) {
 });
 
 
+app.get("/preguntas", function (request, response, next) {
+    //Leer variable taskList con dao del usuario que se ha registrado
+    
+    daoP.read5Random(function cb_markTaskDone(err, result) {
+        if (err) {
+            console.log(err.message);
+        }
+        else {
+            let listaPreguntas = result; 
+            response.render("figura6",listaPreguntas);
+        }
+    });
+});
+
 
 
 app.get("/finish/:taskId", function (request, response, next) {
@@ -250,10 +267,3 @@ app.listen(config.port, function (err) {
 });
 
 
-function cb_insertTask(err, result) {
-    if (err) {
-        console.log(err.message);
-    } else {
-        console.log("Tarea insertada correctamente");
-    }
-}

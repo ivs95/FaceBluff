@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+
+
+<head>
+    <meta charset="utf-8" />
+    <link href="css/figura6.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lobster+Two&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <div class="titulo">
+            <h1>FaceBluff</h1>
+        </div>
+        <div class="enlaces">
+            <a href="/users/my_profile">Perfil</a>
+            <a href="/users/friends">Amigos</a>
+            <a href="">Preguntas</a>
+            <a href="/users/login">Desconectar</a>
+            <a href="">Puntos</a>
+        </div>
+    </header>
+    <main>
+        <div class="contenido">
+            <h2 class="pagina">
+                Preguntas seleccionadas aleatoriamente
+            </h2>
+
+            <div class="main">
+                <% for (var pregunta in listaPreguntas) { %>
+                <section class="pregunta">
+                    <p> <%= pregunta.enunciado %></p>
+                </section>
+                <% } %>
+            </div>
+            <br>
+            ¡Añade tus preguntas!
+
+            <a href="">Crear nueva pregunta</a>
+        </div>
+        </div>
+
+    </main>
+</body>
+
+</html>

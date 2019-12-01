@@ -37,6 +37,7 @@ create table preguntas {
 };
 
 create table notificaciones {
+  
     idUsuario int NOT NULL,
     idUsuarioRespuesta int NOT NULL, 
     acertada bit ,
