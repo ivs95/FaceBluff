@@ -56,7 +56,7 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT idUsuario,enunciado,numRespestaInicial,respuestaCorrecta FROM pregunta WHERE idPRegunta=?";
+                let sql = "SELECT idUsuario,enunciado,numRespestaInicial,respuestaCorrecta FROM pregunta WHERE idPRegunta=?;";
                 conexion.query(sql, idPregunta, function(err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -70,8 +70,24 @@ class DAOPreguntas {
             }
         })
     }
-    responderPregunta(callback) {
-
+    responderPregunta(respuestaCorrecta,idPRegunta,callback) {
+        this.pool.getConnection(function(err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            } else {
+                let sql = "UPDATE pregunta SET respuestaCorrecta="+respuestaCorrecta+ " WHERE idPregunta=?;";
+                conexion.query(sql, idPregunta, function(err, resultado) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    } else  
+                        callback(null);
+                  
+                    conexion.release();
+                })
+            }
+        })
+        // añadir la respuesta propia
     }
     read5Random(callback) {
         this.pool.getConnection(function(err, conexion) {
@@ -109,19 +125,20 @@ class DAOPreguntas {
                     } else {
                         callback(new Error("No existe el usuario"));
                     }
+
                     conexion.release();
                 })
             }
         })
 
     }
-    readRespuestasIncorrectas(idPregunta,cantidad){
+    readRespuestasIncorrectas(idPregunta,cantidad,callback){
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT respuesta FROM preguntaIncorrectas WHERE idPRegunta=? LIMIT " + cantidad +";";
+                let sql = "SELECT respuesta FROM preguntaIncorrectas WHERE idPRegunta = ? LIMIT " + cantidad +";";
                 conexion.query(sql, idPregunta, function(err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));

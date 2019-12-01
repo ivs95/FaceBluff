@@ -76,7 +76,7 @@ app.post("/users/login", function (request, response, next) {
                 //Login correcto
                 //Cambiar el atributo fecha de usuario por su edad antes de guardarlo en la sesion
                 request.session.usuario = result;
-                app.locals.currentUser= result;
+                app.locals.currentUser = result;
                 response.redirect("/users/my_profile");
 
             }
@@ -158,22 +158,21 @@ app.get("/users/friends", function (request, response, next) {
         }
     })
     response.render("figura4", { listaSolicitudes: listaSolicitudes, listaAmigos: listaAmigos });
-};
-
+});
 
 app.get("/users/friends/add_friend/:email", function (request, response, next) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
-    daoA.deletePeticion(request.params.email, request.session.usuario.email, function cb_deletePeticion(err){
-        if (err){
-            console.log(err.message);
-        }
-    });
-    daoA.addFriend(request.session.usuario.email, request.params.email, function cb_addFriend(err){
+    daoA.deletePeticion(request.params.email, request.session.usuario.email, function cb_deletePeticion(err) {
         if (err) {
             console.log(err.message);
         }
-        else{
+    });
+    daoA.addFriend(request.session.usuario.email, request.params.email, function cb_addFriend(err) {
+        if (err) {
+            console.log(err.message);
+        }
+        else {
             redirect("/users/friends")
         }
     })
@@ -182,19 +181,19 @@ app.get("/users/friends/add_friend/:email", function (request, response, next) {
 
 app.get("/users/friends/refuse_friend/:email", function (request, response, next) {
     //Leer variable taskList con dao del usuario que se ha registrado
-    daoA.deletePeticion(request.params.email, request.session.usuario.email, function cb_deletePeticion(err){
-        if (err){
-            console.log(err.message);
-        }
-        else{
-            redirect("/users/friends")
-        }
-    })
-    daoA.addFriend(request.session.usuario.email, request.params.email, function cb_addFriend(err){
+    daoA.deletePeticion(request.params.email, request.session.usuario.email, function cb_deletePeticion(err) {
         if (err) {
             console.log(err.message);
         }
-        else{
+        else {
+            redirect("/users/friends")
+        }
+    })
+    daoA.addFriend(request.session.usuario.email, request.params.email, function cb_addFriend(err) {
+        if (err) {
+            console.log(err.message);
+        }
+        else {
             redirect("/users/friends")
         }
     })
@@ -218,31 +217,51 @@ app.get("/finish/:taskId", function (request, response, next) {
 
 app.get("/question", function (request, response, next) {
     //Leer variable taskList con dao del usuario que se ha registrado
-    
+
     daoP.read5Random(function cb_read5Random(err, result) {
         if (err) {
             console.log(err.message);
         }
         else {
-            let listaPreguntas = result; 
-            response.render("figura6",listaPreguntas);
+            let listaPreguntas = result;
+            response.render("figura6", listaPreguntas);
         }
     });
 
 });
 
-app.get("/question/:idPregunta",function (request, response, next) {
+app.get("/question/:idPregunta", function (request, response, next) {
     //Leer variable taskList con dao del usuario que se ha registrado
-    daoP.readPregunta(request.params.idPregunta,function cb_readPregunta(err, result) {
+    daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
             console.log(err.message);
         }
         else {
-            let listaPreguntas = result; 
-            response.render("figura6",listaPreguntas);
+            var pregunta = result;
+            daoP.readRespuestasIncorrectas(request.params.idPregunta, result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
+                if (err) {
+                    console.log(err.message);
+                }
+                else {
+                    let respuestas = [];
+                    result.forEach(element => {
+                        respuestas.push(element.enunciado);
+                    });
+                    respuestas.push(pregunta.respuestaCorrecta);
+                    respuestas.sort(() => Math.random() - 0.5);
+                    request.render("figura8.ejs", pregunta , respuestas);
+                }
+
+            })
+
         }
     });
 
+});
+app.post("/question/:idPregunta", function (request, response, next) {
+    //Leer variable taskList con dao del usuario que se ha registrado
+    var respuestaElegida = ut.getRespuesta(request.body.seleccion,request.body.seleccionText);
+    //VERY MEGA DUDA RADIOBUTTONS EN EL POST
 });
 
 
