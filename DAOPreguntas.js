@@ -8,6 +8,7 @@ class DAOPreguntas {
 
     }
 
+    
     createPregunta(pregunta, callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
