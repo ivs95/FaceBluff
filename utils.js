@@ -11,17 +11,22 @@ class utils {
         }
         return usuario;
     }
-    getRespuesta (seleccion,seleecionText) {
-        switch (seleccion) {
-            //COMO PILLO EL VALOR DEL RADIO BUTON DINAMICO
-            case "opcion": return seleccion ;break;
-            case "otro" :return seleecionText;break;
-            default:
-                break;
+    getRespuesta (seleccion,seleccionText) {
+        let respuestaElegida = seleccion;
+        if (respuestaElegida == "otro"){
+            respuestaElegida = seleccionText;
         }
+        return respuestaElegida;
     }
 
 
+    createPregunta(enunciado, numRespuestas){
+        let pregunta = {
+            enunciado = enunciado,
+            numRespuestasInicial = numRespuestas
+        }
+        return pregunta;
+    }
 
 }
 

@@ -59,7 +59,7 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT email,nombre,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE email=? ";
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE email=? ";
                 conexion.query(sql, email, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -84,7 +84,56 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT email,nombre,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE nombre=? ";
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE nombre=? ";
+                conexion.query(sql, name, function (err, resultado) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    }
+                    else if(resultado) {
+                        callback(null,resultado);
+                    }
+                    else {
+                        callback(new Error("No existe el usuario"));
+                    }
+                    conexion.release();
+                })
+            }
+        })
+    }
+
+    readById(id, callback){
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE idUsuario=? ";
+                conexion.query(sql, id, function (err, resultado) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    }
+                    else if(resultado) {
+                        callback(null,resultado);
+                    }
+                    else {
+                        callback(new Error("No existe el usuario"));
+                    }
+                    conexion.release();
+                })
+            }
+        })
+    }
+
+    //Funcion que devuelve una lista de tuplas [id,nombre]
+    returnNameWithID(name, callback){
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "SELECT idUsuario, nombre FROM Usuarios WHERE idUsuario=? ";
                 conexion.query(sql, name, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));

@@ -31,15 +31,15 @@ class DAOAmigo {
         })
     }
 
-    addFriend(emailUsuario, emailAmigo, callback){
+    addFriend(idUsuario, idAmigo, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "INSERT INTO amigo (emailUsuario, emailAmigo) VALUES(?,?);";
-                let parametros = [emailUsuario, emailAmigo];
+                let sql = "INSERT INTO amigo (idUsuario, idAmigo) VALUES(?,?);";
+                let parametros = [idUsuario, idAmigo];
                 conexion.query(sql, parametros, function (err) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -54,15 +54,15 @@ class DAOAmigo {
     }
 
 
-    deletePeticion(emailOrigen, emailDestino, callback){
+    deletePeticion(idOrigen, idDestino, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "DELETE FROM peticion WHERE emailOrigen = ? AND emailDestino = ?";
-                let parametros = [emailOrigen, emailDestino];
+                let sql = "DELETE FROM peticion WHERE idOrigen = ? AND idDestino = ?";
+                let parametros = [idOrigen, idDestino];
                 conexion.query(sql, parametros, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -77,15 +77,15 @@ class DAOAmigo {
     }
     
     //Devuelve la lista de amigos del email del usuario registrado
-    readAmigosByUser(email, callback){
+    readAmigosByUser(idUsuario, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT emailAmigo FROM amigo WHERE emailUsuario = ? ";
-                conexion.query(sql, [email], function (err, resultado) {
+                let sql = "SELECT idAmigo FROM amigo WHERE idUsuario = ? ";
+                conexion.query(sql, [idUsuario], function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }

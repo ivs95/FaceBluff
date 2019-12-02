@@ -230,7 +230,69 @@ app.get("/question", function (request, response, next) {
 
 });
 
-app.get("/question/:idPregunta", function (request, response, next) {
+app.get("/question/selected/:idPregunta", function (request, response, next) {
+    //Leer variable taskList con dao del usuario que se ha registrado
+    daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
+        if (err) {
+            console.log(err.message);
+        }
+        else {
+            var pregunta = result;
+            var listaAmigos = daoA.readAmigosByUser(request.session.usuario.email, function cb_readAmigosByUser(err, result){
+                if (err){
+                    console.log(err.message);
+                }
+                else{
+                    let listaAmigos = []
+                    result.forEach(idUsuario => {
+                        daoU.returnNameWithID(idUsuario, function cb_returnNameWithID(err,result){
+                            if (err){
+                                console.log(err.message);
+                            }
+                            else{
+                                listaAmigos.push(result);
+                            }
+                        })
+                    });
+                    //Falta leer las notificaciones para saber a que usuarios se le habilita el boton adivinar
+                    response.render("figura7", {pregunta:pregunta, listaAmigos:listaAmigos, })
+                }
+            })
+
+            daoP.readRespuestasIncorrectas(request.params.idPregunta, result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
+                if (err) {
+                    console.log(err.message);
+                }
+                else {
+                    let respuestas = [];
+                    result.forEach(element => {
+                        respuestas.push(element.enunciado);
+                    });
+                    respuestas.push(pregunta.respuestaCorrecta);
+                    respuestas.sort(() => Math.random() - 0.5);
+                    request.render("figura8.ejs", pregunta , respuestas);
+                }
+            })
+
+        }
+    });
+
+});
+app.post("/question/selected/:idPregunta", function (request, response, next) {
+    //Leer variable taskList con dao del usuario que se ha registrado
+    var respuestaElegida = ut.getRespuesta(request.body.seleccion,request.body.seleccionText);
+    //If value == otro coger el valor del textArea
+    daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.usuario.idUsuario, function cb_responderPregunta(err){
+        if (err) {
+            console.log(err.message);
+        }
+    });
+    //VERY MEGA DUDA RADIOBUTTONS EN EL POST
+});
+
+
+
+app.get("/question/answer/:idPregunta", function (request, response, next) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
@@ -258,10 +320,27 @@ app.get("/question/:idPregunta", function (request, response, next) {
     });
 
 });
-app.post("/question/:idPregunta", function (request, response, next) {
+app.post("/question/answer/:idPregunta", function (request, response, next) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion,request.body.seleccionText);
-    //VERY MEGA DUDA RADIOBUTTONS EN EL POST
+    //If value == otro coger el valor del textArea
+    daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.usuario.idUsuario, function cb_responderPregunta(err){
+        if (err) {
+            console.log(err.message);
+        }
+    });
+});
+
+app.get("/question/answerToOther/:idPregunta/:idAmigo", function (request, response, next) {
+    //Renderizar la vista de responder pregunta en nombre de otro usuario (figura 9)    
+    //Coger de la ruta los parametros idPregunta idAmigo
+    //Llamar al DAOUsuario para coger el nombre idAmigo que se necesita al hacer el render
+});
+app.post("/question/answerToOther/:idPregunta/:idAmigo", function (request, response, next) {
+    //Coger la respuesta del radioButton, comparar si es correcta
+    //Crear la notificacion correspondiente, mostrada por defecto se pone a 0
+    //Aumentar la puntuacion del usuario si ha acertado
+    
 });
 
 
@@ -269,13 +348,25 @@ app.post("/question/:idPregunta", function (request, response, next) {
 app.post("/question/create",function (request, response, next){
     let enunciado = request.body.enunciado;
     let respuestas = request.body.respuestas.split("\n");
-    
+    ut.createPregunta(enunciado, respuestas.length());
+    daoP.createPregunta(pregunta, function cb_readRespuestasIncorrectas(err, result) {
+        if (err) {
+            console.log(err.message);
+        }
+        else {
+            respuestas.forEach(element => {
+                daoP.añadirRespuestaPregunta(result, element, function cb_inserRespuestas(err){
+                    if (err){
+                        console.log(err.message);
+                    }
+                })
+            });
+            
+        }
+    });
 });
-//
-//
-//
-//
-//
+
+
 
 
 

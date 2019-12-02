@@ -11,47 +11,61 @@ create table usuario {
 };
 
 create table amigo {
-  emailUsuario varchar(255) NOT NULL,
-  emailAmigo varchar(255) NOT NULL,
-  Primary Key (emailUsuario, emailAmigo),
-  FOREIGN KEY (emailUsuario) REFERENCES usuario(email),
-  FOREIGN KEY (emailAmigo) REFERENCES usuario(email)
+  idUsuario varchar(255) NOT NULL,
+  idAmigo varchar(255) NOT NULL,
+  Primary Key (idUsuario, idAmigo),
+  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
+  FOREIGN KEY (idAmigo) REFERENCES usuario(idUsuario)
 };
 
 create table peticion {
-  emailOrigen int NOT NULL ,
-  emailDestino int NOT NULL,
-  Primary Key (emailOrigen, emailDestino),
-  FOREIGN KEY (emailOrigen) REFERENCES usuario(email),
-  FOREIGN KEY (emailDestino) REFERENCES usuario(email)
+  idOrigen int NOT NULL ,
+  idDestino int NOT NULL,
+  Primary Key (idOrigen, idDestino),
+  FOREIGN KEY (idOrigen) REFERENCES usuario(idUsuario),
+  FOREIGN KEY (idDestino) REFERENCES usuario(idUsuario)
 };
 
 create table preguntas {
   idPregunta int NOT NULL UNIQUE AUTO_INCREMENT,
-  idUsuario int  NOT NULL ,
   enunciado LONGTEXT NOT NULL,
-  numRespestaInicial int ,
-  respuestaCorrecta LONGTEXT ,
+  numRespuestasInicial int ,
   Primary Key (idPregunta),
-  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
 };
 
+
+create table preguntaRespondida {
+  idPregunta int NOT NULL UNIQUE AUTO_INCREMENT,
+  idUsuario int  NOT NULL ,
+  respuesta LONGTEXT
+
+  Primary Key (idUsuario, idPregunta),
+  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
+  FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
+}
+
+
+create table respuestas{ 
+    idPregunta int NOT NULL ,
+    respuesta LONGTEXT,
+    FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
+}
+
 create table notificaciones {
-  
     idUsuario int NOT NULL,
-    idUsuarioRespuesta int NOT NULL, 
+    idUsuarioRespuesta int NOT NULL, (El que esta loggeado al crear la notificacion)
+    idPregunta int NOT NULL
     acertada bit ,
     enunciado LONGTEXT NOT NULL, 
-    respuestaCorrecta ,
-    respuestaSeleccionada , 
+    respuestaCorrecta LONGTEXT NOT NULL, 
+    respuestaSeleccionada LONGTEXT NOT NULL,
+    mostrada bit
+
+    Primary Key (idUsuario, idUsuarioRespuesta, idPregunta),
     FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
     FOREIGN KEY (idUsuarioRespuesta) REFERENCES usuario(idUsuario)
+    FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
 
 }
 
-create table respuestasIncorrectas{ 
-    idPregunta int NOT NULL ,
-    respuesta LONGTEXT ,
-
-}
 

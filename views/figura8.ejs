@@ -30,11 +30,12 @@
 
             <div class="main">
 
-                <form action="" method="post">
+                <form action=<%=/question/answer/ +pregunta.idPregunta %> method="post">
                     <section class="pregunta">
-                        <% for (var index in respuestas) { %>
-                        <input type="radio"  name="seleccion" value="opcion"> <span> <%= index %></span>
-                        <% ); %>
+
+                        <% respuestas.forEach(element => { %>
+                        <input type="radio"  name="seleccion" value=<%= element %>> <span> <%= element %></span>
+                        <% }); %>
                     </section>
                     <section class="pregunta otra">
                         <input type="radio" name="seleccion" value ="otro" > <span> Otra : </span>
