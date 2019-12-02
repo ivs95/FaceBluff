@@ -266,7 +266,11 @@ app.post("/question/:idPregunta", function (request, response, next) {
 
 
 //
-//app.post("/question/create")
+app.post("/question/create",function (request, response, next){
+    let enunciado = request.body.enunciado;
+    let respuestas = request.body.respuestas.split("\n");
+    
+});
 //
 //
 //
