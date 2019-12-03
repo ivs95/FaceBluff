@@ -66,7 +66,7 @@ create table preguntaAmigoRespondida {
 create table imagenes {
   idUsuario int not null,
   imagen varchar(255),
-  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
+  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
 
 
 }
