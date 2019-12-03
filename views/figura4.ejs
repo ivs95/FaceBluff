@@ -28,7 +28,7 @@
             <% for (var solicitud in listaSolicitudes) { %>
                 <div>
                     <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                    <span> <%= solicitud.nombre %></span>
+                    <a href=<%=/users/profile/ +solicitud.idUsuario %>><%= solicitud.nombre %></a>
                     <a href=<%=/users/friends/add_friend/ +solicitud.idUsuario %> class="aceptaAmigo">Aceptar</a>
                     <a href=<%=/users/friends/refuse_friend/ +solicitud.idUsuario %> class="rechazaAmigo">Rechazar</a>
                 </div>
@@ -45,7 +45,7 @@
             <% for (var amigo in listaAmigos) { %>
             <div>
                 <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <span> <%= amigo.nombre %></span>
+                <a href=<%=/users/profile/ +amigo.idUsuario %>><%= amigo.nombre %></a>
             </div>
             <% } %>
 

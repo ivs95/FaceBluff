@@ -34,18 +34,15 @@ app.use(middlewareSession);
 Modificar figura 3 se tiene que ver una lista de fotos.
 FIGURA 3 pero sin boton de modificar para cuando se pulsa el nonmbre de alguien --- añadir rutas
 
-CAMBIAR EN EJS LOS NOMBRES SON ENLACES A LAS RUTAS DEL PERFIL.
+FIGURA5 Y RUTAS --> BUSQUEDA EN EL NOMBRE
 
 AÑADIR EN LA FIGURA 3 boton de subir imagen.
 
 RUTA PARA SUBIR UNA IMAGEN + EJS + DAOS.
 
-MIDDLEWARE DE ACCESO. 
-
 ERROR 404 EJS. 
 
 VALIDACION DE FORMULARIOS.
-
 
 */ 
 

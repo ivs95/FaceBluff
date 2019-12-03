@@ -33,6 +33,23 @@ routerUsers.post("/login", function (request, response) {
     var password = request.body.password;
 });
 
+
+app.use(function accessControl(request, response, next) {
+    daoU.isUserCorrect(request.session.usuario.email, request.session.usuario.contraseña, function cB_isUserCorrect(err, result) {
+        if (err) {
+            response.render("error500", {mensaje:err.message});
+        }
+        else if (result == false) {
+            request.session.errorMsg = "Debes estar logueado para acceder";
+            response.redirect("/users/login");
+
+        }
+        else { 
+            next();
+        }
+    });
+});
+
 //Usar middleware de control de acceso con app.use(middlewareacceso)
 routerUsers.get("/my_profile", function (request, response) {
     let usuario = request.session.usuario;

@@ -172,6 +172,30 @@ class DAOUsuario {
         })
     }
 
+    isUserCorrect(email, password, callback) {
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "SELECT email, contraseña FROM usuarios WHERE email = ? AND contraseña = ?;";
+                let params = [email, password];
+                conexion.query(sql, params, function (err, resultado) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    }
+                    else if (resultado[0] != null) {
+                        callback(null, true);
+                    }
+                    else {
+                        callback(null, false);
+                    }
+                    conexion.release();
+                })
+            }
+        })
+    }
+
 }
 
 

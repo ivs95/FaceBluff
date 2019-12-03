@@ -1,5 +1,21 @@
 const routerQuestions = express.Router();
 
+app.use(function accessControl(request, response, next) {
+    daoU.isUserCorrect(request.session.usuario.email, request.session.usuario.contraseña, function cB_isUserCorrect(err, result) {
+        if (err) {
+            response.render("error500", { mensaje: err.message });
+        }
+        else if (result == false) {
+            request.session.errorMsg = "Debes estar logueado para acceder";
+            response.redirect("/users/login");
+
+        }
+        else {
+            next();
+        }
+    });
+});
+
 routerQuestions.get("/show", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
@@ -182,7 +198,7 @@ routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", function (request, r
                     if (err) {
                         console.log(err.message);
                     }
-                    
+
                 });
 
 
