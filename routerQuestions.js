@@ -5,7 +5,7 @@ routerQuestions.get("/show", function (request, response) {
 
     daoP.read5Random(function cb_read5Random(err, result) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         }
         else {
             let listaPreguntas = result;
@@ -19,20 +19,20 @@ routerQuestions.get("/selected/:idPregunta", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         }
         else {
             var pregunta = result;
             var listaAmigos = daoA.readAmigosByUser(request.session.usuario.email, function cb_readAmigosByUser(err, result) {
                 if (err) {
-                    console.log(err.message);
+                    response.render("error500", {mensaje:err.message});
                 }
                 else {
                     let listaAmigos = []
                     result.forEach(idUsuario => {
                         daoU.returnNameWithID(idUsuario, function cb_returnNameWithID(err, result) {
                             if (err) {
-                                console.log(err.message);
+                                response.render("error500", {mensaje:err.message});
                             }
                             else {
                                 listaAmigos.push(result);
@@ -46,7 +46,7 @@ routerQuestions.get("/selected/:idPregunta", function (request, response) {
 
             daoP.readRespuestasIncorrectas(request.params.idPregunta, result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
-                    console.log(err.message);
+                    response.render("error500", {mensaje:err.message});
                 }
                 else {
                     let respuestas = [];
@@ -69,7 +69,7 @@ routerQuestions.post("/selected/:idPregunta", function (request, response) {
     //If value == otro coger el valor del textArea
     daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.usuario.idUsuario, function cb_responderPregunta(err) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         }
     });
     //VERY MEGA DUDA RADIOBUTTONS EN EL POST
@@ -79,13 +79,13 @@ routerQuestions.get("/answer/:idPregunta", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         }
         else {
             var pregunta = result;
             daoP.readRespuestasIncorrectas(request.params.idPregunta, result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
-                    console.log(err.message);
+                    response.render("error500", {mensaje:err.message});
                 }
                 else {
                     let respuestas = [];
@@ -109,7 +109,7 @@ routerQuestions.post("/answer/:idPregunta", function (request, response) {
     //If value == otro coger el valor del textArea
     daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.usuario.idUsuario, function cb_responderPregunta(err) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         }
     });
 });
@@ -132,13 +132,13 @@ routerQuestions.post("/create", function (request, response) {
     ut.createPregunta(enunciado, respuestas.length());
     daoP.createPregunta(pregunta, function cb_readRespuestasIncorrectas(err, result) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         }
         else {
             respuestas.forEach(element => {
                 daoP.añadirRespuestaPregunta(result, element, function cb_inserRespuestas(err) {
                     if (err) {
-                        console.log(err.message);
+                        response.render("error500", {mensaje:err.message});
                     }
                 })
             });

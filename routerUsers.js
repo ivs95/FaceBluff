@@ -13,7 +13,7 @@ routerUsers.post("/login", function (request, response) {
 
     daoU.readByEmail(email, function cb_readUsuario(err, result) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         } else if (result !== null) {
             if (result.contraseña == request.body.password) {
                 //Login correcto
@@ -50,7 +50,7 @@ routerUsers.post("/new_user", function (request, response) {
     var usuario = utils.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha, request.body.foto);
     daoU.createUser(usuario, function cb_crearUsuario(err) {
         if (err) {
-            console.log(err);
+            response.render("error500", {mensaje:err.message});
         }
         else {
             response.redirect("/users/login")
@@ -66,7 +66,7 @@ routerUsers.get("/friends", function (request, response) {
 
     daoA.readPeticionesByUser(usuario.idUsuario, function cb_readPeticionesByUser(err, result) {
         if (err) {
-            console.log(err);
+            response.render("error500", {mensaje:err.message});
         }
         else {
 
@@ -79,7 +79,7 @@ routerUsers.get("/friends", function (request, response) {
             });
             daoA.readAmigosByUser(usuario.email, function cb_readAmigosByUser(err, result) {
                 if (err) {
-                    console.log(err);
+                    response.render("error500", {mensaje:err.message});
                 }
                 else {
                     result.forEach(element => {
@@ -102,12 +102,12 @@ routerUsers.get("/friends/add_friend/:idUsuario", function (request, response) {
 
     daoA.deletePeticion(request.params.idUsuario, request.session.usuario.idUsuario, function cb_deletePeticion(err) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         }
         else {
             daoA.addFriend(request.session.usuario.idUsuario, request.params.idUsuario, function cb_addFriend(err) {
                 if (err) {
-                    console.log(err.message);
+                    response.render("error500", {mensaje:err.message});
                 }
                 else {
                     redirect("/users/friends")
@@ -123,7 +123,7 @@ routerUsers.get("/friends/refuse_friend/:idUsuario", function (request, response
     //Leer variable taskList con dao del usuario que se ha registrado
     daoA.deletePeticion(request.params.idUsuario, request.session.usuario.email, function cb_deletePeticion(err) {
         if (err) {
-            console.log(err.message);
+            response.render("error500", {mensaje:err.message});
         }
         else {
             redirect("/users/friends")
