@@ -7,13 +7,13 @@ create table usuario {
   genero varchar(255) NOT NULL ,
   fecha (opcional) date ,
   puntuacion double ,
-  Primary Key (idUsuario),
+  PRIMARY KEY (idUsuario),
 };
 
 create table amigo {
   idUsuario varchar(255) NOT NULL,
   idAmigo varchar(255) NOT NULL,
-  Primary Key (idUsuario, idAmigo),
+  PRIMARY KEY (idUsuario, idAmigo),
   FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
   FOREIGN KEY (idAmigo) REFERENCES usuario(idUsuario)
 };
@@ -21,7 +21,7 @@ create table amigo {
 create table peticion {
   idOrigen int NOT NULL ,
   idDestino int NOT NULL,
-  Primary Key (idOrigen, idDestino),
+  PRIMARY KEY (idOrigen, idDestino),
   FOREIGN KEY (idOrigen) REFERENCES usuario(idUsuario),
   FOREIGN KEY (idDestino) REFERENCES usuario(idUsuario)
 };
@@ -30,7 +30,7 @@ create table preguntas {
   idPregunta int NOT NULL UNIQUE AUTO_INCREMENT,
   enunciado LONGTEXT NOT NULL,
   numRespuestasInicial int ,
-  Primary Key (idPregunta),
+  PRIMARY KEY (idPregunta),
 };
 
 
@@ -39,7 +39,7 @@ create table preguntaRespondida {
   idUsuario int  NOT NULL ,
   respuesta LONGTEXT
 
-  Primary Key (idUsuario, idPregunta),
+  PRIMARY KEY (idUsuario, idPregunta),
   FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
   FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
 }
@@ -51,19 +51,15 @@ create table respuestas{
     FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
 }
 
-create table notificaciones {
+create table preguntaAmigoRespondida {
     idUsuario int NOT NULL,
-    idUsuarioRespuesta int NOT NULL, (El que esta loggeado al crear la notificacion)
-    idPregunta int NOT NULL
-    acertada bit ,
-    enunciado LONGTEXT NOT NULL, 
-    respuestaCorrecta LONGTEXT NOT NULL, 
-    respuestaSeleccionada LONGTEXT NOT NULL,
-    mostrada bit
+    idAmigo int NOT NULL,
+    idPregunta int NOT NULL,
+    acertada bit,
 
-    Primary Key (idUsuario, idUsuarioRespuesta, idPregunta),
+    PRIMARY KEY (idUsuario, idAmigo, idPregunta),
     FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
-    FOREIGN KEY (idUsuarioRespuesta) REFERENCES usuario(idUsuario)
+    FOREIGN KEY (idAmigo) REFERENCES usuario(idUsuario)
     FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
 
 }

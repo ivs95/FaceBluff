@@ -1,85 +1,6 @@
-// app.js
-const config = require("./config");
-const DAOUsuarios = require("./DAOUsuario");
-const DAOPreguntas = require("./DAOPreguntas");
-const DAONotificacion = require("./DAONotificacion");
-const DAOAmigo = require("./DAOAmigo")
-const utils = require("./utils");
-const path = require("path");
-const mysql = require("mysql");
-const express = require("express");
-const bodyParser = require("body-parser");
-const fs = require("fs");
-const cookieParser = require("cookie-parser");
-const express_session = require("express-session");
-const express_mysqlsession = require("express-mysql-session");
+const routerQuestions = express.Router();
 
-const MySQLStore = express_mysqlsession(express_session);
-const sessionStore = new MySQLStore(config.mysqlConfig);
-const middlewareSession = session({ saveUninitialized: false, secret: "foobar34", resave: false, store: sessionStore });
-app.use(middlewareSession);
-
-
-
-// Crear un servidor Express.js
-const app = express();
-
-// Crear un pool de conexiones a la base de datos de MySQL
-const pool = mysql.createPool(config.mysqlConfig);
-
-// Crear una instancia de DAOUsuarios
-const daoU = new DAOUsuarios(pool);
-const daoA = new DAOAmigo(pool);
-const daoP = new DAOPreguntas(pool);
-const ut = new utils();
-const ficherosEstaticos = path.join(__dirname, "public");
-const routerUsers = require("./routerUsers")
-const routerQuestions = require("./routerQuestions")
-
-app.use("/users", routerUsers)
-app.use("/question", routerQuestions)
-
-
-let email = "usuario@ucm.es";
-
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-app.use(express.static(ficherosEstaticos));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-
-
-
-app.get("/tasks", function (request, response) {
-    //Leer variable taskList con dao del usuario que se ha registrado
-    daoT.getAllTasks(email, function cb_getAllTasks(err, result) {
-        if (err) {
-            console.log(err.message);
-        } else if (result !== []) {
-            taskList = result;
-            response.render("tasks", { taskList: taskList });
-        } else {
-            console.log("No hay tareas para ese usuario");
-        }
-    });
-
-});
-
-app.get("/finish/:taskId", function (request, response) {
-    //Leer variable taskList con dao del usuario que se ha registrado
-    daoT.markTaskDone(request.params.taskId, function cb_markTaskDone(err, result) {
-        if (err) {
-            console.log(err.message);
-        }
-        else {
-            response.redirect("/tasks");
-        }
-    });
-
-});
-
-
-app.get("/question", function (request, response) {
+routerQuestions.get("/show", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
     daoP.read5Random(function cb_read5Random(err, result) {
@@ -94,7 +15,7 @@ app.get("/question", function (request, response) {
 
 });
 
-app.get("/question/selected/:idPregunta", function (request, response) {
+routerQuestions.get("/selected/:idPregunta", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
@@ -142,7 +63,7 @@ app.get("/question/selected/:idPregunta", function (request, response) {
     });
 
 });
-app.post("/question/selected/:idPregunta", function (request, response) {
+routerQuestions.post("/selected/:idPregunta", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
     //If value == otro coger el valor del textArea
@@ -154,7 +75,7 @@ app.post("/question/selected/:idPregunta", function (request, response) {
     //VERY MEGA DUDA RADIOBUTTONS EN EL POST
 });
 
-app.get("/question/answer/:idPregunta", function (request, response) {
+routerQuestions.get("/answer/:idPregunta", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
@@ -182,7 +103,7 @@ app.get("/question/answer/:idPregunta", function (request, response) {
     });
 
 });
-app.post("/question/answer/:idPregunta", function (request, response) {
+routerQuestions.post("/answer/:idPregunta", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
     //If value == otro coger el valor del textArea
@@ -193,19 +114,19 @@ app.post("/question/answer/:idPregunta", function (request, response) {
     });
 });
 
-app.get("/question/answerToOther/:idPregunta/:idAmigo", function (request, response) {
+routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", function (request, response) {
     //Renderizar la vista de responder pregunta en nombre de otro usuario (figura 9)    
     //Coger de la ruta los parametros idPregunta idAmigo
     //Llamar al DAOUsuario para coger el nombre idAmigo que se necesita al hacer el render
 });
-app.post("/question/answerToOther/:idPregunta/:idAmigo", function (request, response) {
+routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", function (request, response) {
     //Coger la respuesta del radioButton, comparar si es correcta
     //Crear la notificacion correspondiente, mostrada por defecto se pone a 0
     //Aumentar la puntuacion del usuario si ha acertado
 
 });
 //
-app.post("/question/create", function (request, response) {
+routerQuestions.post("/create", function (request, response) {
     let enunciado = request.body.enunciado;
     let respuestas = request.body.respuestas.split("\n");
     ut.createPregunta(enunciado, respuestas.length());
@@ -226,15 +147,4 @@ app.post("/question/create", function (request, response) {
     });
 });
 
-
-// Arrancar el servidor
-app.listen(config.port, function (err) {
-    if (err) {
-        console.log("ERROR al iniciar el servidor");
-    }
-    else {
-        console.log(`Servidor arrancado en el puerto ${config.port}`);
-    }
-});
-
-
+module.exports = routerQuestions;

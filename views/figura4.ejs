@@ -17,9 +17,9 @@
         <div class="enlaces">
             <a href="/users/my_profile">Perfil</a>
             <a href="/users/friends">Amigos</a>
-            <a href="">Preguntas</a>
+            <a href="/question/show">Preguntas</a>
             <a href="/users/login">Desconectar</a>
-            <a href="">Puntos</a>
+            <a href=""> <%= currentUser.puntuacion %></a>
         </div>
     </header>
     <main>
@@ -29,8 +29,8 @@
                 <div>
                     <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
                     <span> <%= solicitud.nombre %></span>
-                    <a href=<%=/users/friends/add_friend/ +solicitud.email %> class="aceptaAmigo">Aceptar</a>
-                    <a href=<%=/users/friends/refuse_friend/ +solicitud.email %> class="rechazaAmigo">Rechazar</a>
+                    <a href=<%=/users/friends/add_friend/ +solicitud.idUsuario %> class="aceptaAmigo">Aceptar</a>
+                    <a href=<%=/users/friends/refuse_friend/ +solicitud.idUsuario %> class="rechazaAmigo">Rechazar</a>
                 </div>
                 <% } %>
         </div>

@@ -101,14 +101,14 @@ class DAOAmigo {
 
 
     //Devuelve la lista de peticiones que tiene el email del usuario registrado
-    readPeticionesByUser(email, callback){
+    readPeticionesByUser(idUsuario, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT emailOrigen FROM peticion WHERE emailDestino=?";
+                let sql = "SELECT idOrigen FROM peticion WHERE idDestino=?";
                 conexion.query(sql, email, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
