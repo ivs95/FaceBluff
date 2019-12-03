@@ -32,7 +32,8 @@ app.use(middlewareSession);
 
 
 Modificar figura 3 se tiene que ver una lista de fotos.
-FIGURA 3 pero sin boton de modificar para cuando se pulsa el nonmbre de alguien --- añadir rutas
+Calcular la edad de los usuarios en lugar de poner la fecha a pelo
+
 
 FIGURA5 Y RUTAS --> BUSQUEDA EN EL NOMBRE
 
