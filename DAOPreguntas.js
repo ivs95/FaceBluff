@@ -164,6 +164,9 @@ class DAOPreguntas {
         })
 
     }
+    insertPreguntaAmigoRespondida(idUsuario,idAmigo,idPRegunta,acertada,callback){
+        
+    }
 
 
 }

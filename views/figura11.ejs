@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+
+<head>
+    <meta charset="utf-8" />
+    <link href="css/figura2.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lobster+Two&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <div class="titulo">
+            <h1>FaceBluff</h1>
+        </div>
+        <div class="enlaces">
+                <a href="/users/my_profile">Perfil</a>
+                <a href="/users/friends">Amigos</a>
+                <a href="/question/show">Preguntas</a>
+                <a href="/users/login">Desconectar</a>
+                <a href=""> <%= currentUser.puntuacion %></a>
+        </div>
+    </header>
+    <main>
+        <div class="contenido">
+            <h2 class="pagina">
+                <%= currentUser.nombre %>
+            </h2>
+            <form method="POST" action="/users/new_user" class="formulario">
+                <div class="dato">
+                    <div class="tag">Email</div>
+                    <div class="input"><input type="text" name="email"></div>
+                </div>
+                <div class="dato">
+                    <div class="tag">Contraseña</div>
+                    <div class="input"><input type="password" name="password"></div>
+                </div>
+                <div class="dato">
+                    <div class="tag">Nombre completo</div>
+                    <div class="input"><input type="text" name="nombre"></div>
+                </div>
+                <div class="dato">
+                    <div class="tag sexo">
+                        <span>Sexo</span>
+                        <input type="radio" name="sexo" value="hombre"> Hombre
+                        <input type="radio" name="sexo" value="mujer"> Mujer
+                    </div>
+                </div>
+                <div class="dato">
+                    <div class="tag">Fecha de nacimiento</div>
+                    <div class="input"><input type="date" name="fecha"></div>
+                </div>
+                <div class="dato">
+                    <div class="tag">Imagen de perfil</div>
+                    <div class="input"><input type="file" name="foto"></div>
+                </div>
+                <input type="submit" value="Crear usuario" class="login">
+            </form>
+        </div>
+
+    </main>
+</body>
+
+</html>

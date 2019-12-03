@@ -63,5 +63,12 @@ create table preguntaAmigoRespondida {
     FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
 
 }
+create table imagenes {
+  idUsuario int not null,
+  imagen varchar(255),
+  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
+
+
+}
 
 

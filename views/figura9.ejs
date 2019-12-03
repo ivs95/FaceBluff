@@ -25,26 +25,22 @@
     <main>
         <div class="contenido">
             <h2 class="pagina">
-                ¿Quien es mejor, Messi o Cristiano?
+                <%= pregunta.enunciado %>
             </h2>
 
             <div class="main">
-                <h3>¿Que crees que opina Jorge Millán?</h3>
-                <section class="pregunta">
-                    <input type="radio" value="male"> <span>Messi</span>
-
-                </section>
-                <section class="pregunta">
-                    <input type="radio" name="gender" value="male"> <span>Cristiano</span>
-                </section>
-
-                <section class="pregunta">
-                    <input type="radio" name="gender" value="male"> <span>Chigrinsky</span>
-                </section>
-
+                <form action=<%=question/answerToOther/ + pregunta.idPregunta + / + amigo.idAmigo %> method="post">
+                    <h3>¿Que crees que opina <%= amigo.nombre %>?</h3>
+                    <% respuestas.forEach(element => { %>
+                    <section class="pregunta">
+                        <input type="radio" name="seleccion" value=<%= element %>> <span>element</span>
+                    </section>
+                    <% }); %>
+                    <input type="submit" value="Responder">
+                </form>
             </div>
 
-            <a href="">Responder</a>
+
         </div>
 
 

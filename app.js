@@ -21,6 +21,43 @@ app.use(middlewareSession);
 
 
 
+
+
+
+
+
+
+
+/*
+
+
+Modificar figura 3 se tiene que ver una lista de fotos.
+FIGURA 3 pero sin boton de modificar para cuando se pulsa el nonmbre de alguien --- añadir rutas
+
+CAMBIAR EN EJS LOS NOMBRES SON ENLACES A LAS RUTAS DEL PERFIL.
+
+AÑADIR EN LA FIGURA 3 boton de subir imagen.
+
+RUTA PARA SUBIR UNA IMAGEN + EJS + DAOS.
+
+MIDDLEWARE DE ACCESO. 
+
+ERROR 404 EJS. 
+
+VALIDACION DE FORMULARIOS.
+
+
+*/ 
+
+
+
+
+
+
+
+
+
+
 // Crear un servidor Express.js
 const app = express();
 
@@ -155,7 +192,6 @@ app.post("/question/selected/:idPregunta", function (request, response) {
 });
 
 app.get("/question/answer/:idPregunta", function (request, response) {
-    //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
             console.log(err.message);
@@ -193,17 +229,8 @@ app.post("/question/answer/:idPregunta", function (request, response) {
     });
 });
 
-app.get("/question/answerToOther/:idPregunta/:idAmigo", function (request, response) {
-    //Renderizar la vista de responder pregunta en nombre de otro usuario (figura 9)    
-    //Coger de la ruta los parametros idPregunta idAmigo
-    //Llamar al DAOUsuario para coger el nombre idAmigo que se necesita al hacer el render
-});
-app.post("/question/answerToOther/:idPregunta/:idAmigo", function (request, response) {
-    //Coger la respuesta del radioButton, comparar si es correcta
-    //Crear la notificacion correspondiente, mostrada por defecto se pone a 0
-    //Aumentar la puntuacion del usuario si ha acertado
 
-});
+
 //
 app.post("/question/create", function (request, response) {
     let enunciado = request.body.enunciado;
