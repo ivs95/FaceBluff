@@ -1,4 +1,8 @@
+const utils = require("./utils");
+
+
 const routerUsers = express.Router();
+const ut = new utils();
 
 
 routerUsers.get("/login", function (request, response) {
@@ -18,6 +22,7 @@ routerUsers.post("/login", function (request, response) {
             if (result.contraseña == request.body.password) {
                 //Login correcto
                 //Cambiar el atributo fecha de usuario por su edad antes de guardarlo en la sesion
+                result.edad = ut.calculateAge(result.fecha);
                 request.session.usuario = result;
                 app.locals.currentUser = result;
                 response.redirect("/users/my_profile");
@@ -59,14 +64,14 @@ routerUsers.get("/my_profile", function (request, response) {
 
 
 routerUsers.get("/profile/:idUsuario", function (request, response) {
-    let usuario = daoU.readById(idUsuario, function cb_readUsuario(err, result) {
+    daoU.readById(idUsuario, function cb_readUsuario(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
         else {
             let usuario = result;
-            usuario.edad = CALCULAR EDAD
-            response.render("figura3b", {usuario:result});
+            usuario.edad = ut.calculateAge(usuario.fecha);
+            response.render("figura3b", { usuario: result });
 
         }
     })
@@ -90,6 +95,20 @@ routerUsers.post("/new_user", function (request, response) {
 
     })
 });
+
+
+routerUsers.post("/search", function (request, response) {
+    let caracter = request.body.busqueda;
+    daoU.usersWithCharInName(caracter, function cb_usersFindChar(err,result){
+        if (err) {
+            response.render("error500", { mensaje: err.message });
+        }
+        else {
+            response.render("figura5", { usuarios: result });
+        }
+    });
+});
+
 
 routerUsers.get("/friends", function (request, response) {
     let usuario = request.session.usuario;
@@ -126,6 +145,33 @@ routerUsers.get("/friends", function (request, response) {
             })
         }
     });
+
+});
+
+routerUsers.get("/friends/request_friend/:idUsuario", function (request, response) {
+    //Leer variable taskList con dao del usuario que se ha registrado
+    daoA.isAmigo(request.session.usuario.idUsuario, request.params.idUsuario, function cb_isAmigo(err, result) {
+        if (err) {
+            response.render("error500", { mensaje: err.message });
+        }
+        else {
+            if (result != true) {
+                daoA.readPeticionesByUser(idUsuario, function cb_readPeticionesByUser(err, result) {
+                    if (err) {
+                        response.render("error500", { mensaje: err.message });
+                    }
+                    else if (result == null) {
+                        daoA.addPeticion(request.session.usuario.idUsuario, request.params.idUsuario), function cb_deletePeticion(err) {
+                            if (err) {
+                                response.render("error500", { mensaje: err.message });
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    });
+
 
 });
 

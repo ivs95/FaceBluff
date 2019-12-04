@@ -29,15 +29,15 @@ class DAOUsuario {
             }
         })
     }
-    updateUser(usuario, callback){
+    updateUser(usuario, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "UPDATE usuarios SET email="+usuario.email+"  nombre="+usuario.nombre+" contraseña="+usuario.contraseña+
-                " genero ="+usuario.genero+"fecha="+usuario.fecha+" where idUsuario = ?";
+                let sql = "UPDATE usuarios SET email=" + usuario.email + "  nombre=" + usuario.nombre + " contraseña=" + usuario.contraseña +
+                    " genero =" + usuario.genero + "fecha=" + usuario.fecha + " where idUsuario = ?";
                 let parametros = [usuario.id];
                 conexion.query(sql, parametros, function (err, resultado) {
                     if (err) {
@@ -51,8 +51,8 @@ class DAOUsuario {
             }
         })
     }
-    
-    readByEmail(email, callback){
+
+    readByEmail(email, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -64,8 +64,8 @@ class DAOUsuario {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
-                    else if(resultado) {
-                        callback(null,resultado);
+                    else if (resultado) {
+                        callback(null, resultado);
                     }
                     else {
                         callback(new Error("No existe el usuario"));
@@ -77,7 +77,7 @@ class DAOUsuario {
 
     }
 
-    readByName(name, callback){
+    readByName(name, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -89,8 +89,8 @@ class DAOUsuario {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
-                    else if(resultado) {
-                        callback(null,resultado);
+                    else if (resultado) {
+                        callback(null, resultado);
                     }
                     else {
                         callback(new Error("No existe el usuario"));
@@ -101,7 +101,7 @@ class DAOUsuario {
         })
     }
 
-    readById(id, callback){
+    readById(id, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -113,8 +113,8 @@ class DAOUsuario {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
-                    else if(resultado) {
-                        callback(null,resultado);
+                    else if (resultado) {
+                        callback(null, resultado);
                     }
                     else {
                         callback(new Error("No existe el usuario"));
@@ -126,7 +126,7 @@ class DAOUsuario {
     }
 
     //Funcion que devuelve una lista de tuplas [id,nombre]
-    returnNameWithID(name, callback){
+    returnNameWithID(name, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -138,8 +138,8 @@ class DAOUsuario {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
-                    else if(resultado) {
-                        callback(null,resultado);
+                    else if (resultado) {
+                        callback(null, resultado);
                     }
                     else {
                         callback(new Error("No existe el usuario"));
@@ -150,7 +150,7 @@ class DAOUsuario {
         })
     }
 
-    increasePoints(id, puntuacion, callback){
+    increasePoints(id, puntuacion, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -158,7 +158,7 @@ class DAOUsuario {
             }
             else {
                 let sql = "UPDATE usuarios SET puntuacion=? where idUsuario=?;";
-                let parametros = [puntuacion,id];
+                let parametros = [puntuacion, id];
                 conexion.query(sql, parametros, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -171,6 +171,39 @@ class DAOUsuario {
             }
         })
     }
+
+    usersWithCharInName(caracter, callback) {
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "SELECT * FROM usuarios;";
+                conexion.query(sql, function (err, resultado) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    }
+                    else {
+                        retorno = [];
+                        resultado.forEach(element => {
+                            let sql = "SELECT CHARINDEX(?, element.nombre) AS MatchPosition";
+                            conexion.query(sql,caracter, function (err, resultado) {
+                                if (err) {
+                                    callback(new Error("Error de acceso a la base de datos"));
+                                }
+                                if (resultado.MatchPosition != 0) {
+                                    retorno.push(element);
+                                }
+                            });
+                        });
+                        callback(null, retorno);
+                    }
+                });
+                conexion.release();
+            }
+        });
+    };
+
 
     isUserCorrect(email, password, callback) {
         this.pool.getConnection(function (err, conexion) {

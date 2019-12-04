@@ -26,18 +26,22 @@
         <div class="solicitudes bloque">
             <h2>Solicitudes de amistad</h2>
             <% for (var solicitud in listaSolicitudes) { %>
-                <div>
-                    <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                    <a href=<%=/users/profile/ +solicitud.idUsuario %>><%= solicitud.nombre %></a>
-                    <a href=<%=/users/friends/add_friend/ +solicitud.idUsuario %> class="aceptaAmigo">Aceptar</a>
-                    <a href=<%=/users/friends/refuse_friend/ +solicitud.idUsuario %> class="rechazaAmigo">Rechazar</a>
-                </div>
-                <% } %>
+            <div>
+                <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
+                <a href=<%=/users/profile/ +solicitud.idUsuario %>><%= solicitud.nombre %></a>
+                <a href=<%=/users/friends/add_friend/ +solicitud.idUsuario %> class="aceptaAmigo">Aceptar</a>
+                <a href=<%=/users/friends/refuse_friend/ +solicitud.idUsuario %> class="rechazaAmigo">Rechazar</a>
+            </div>
+            <% } %>
         </div>
         <div class="busqueda bloque">
             <h2>Búsqueda de amigos</h2>
             <div>
-                <span>Buscar por nombre: </span><input type="text" name="nombre_busqueda"><a href="">Buscar</a>
+                <form method="POST" action="/users/search" class="formulario">
+                    <span>Buscar por nombre: </span>
+                    <input type="text" name="busqueda">
+                    <input type="submit" value="Buscar" class="buscar">
+                </form>
             </div>
         </div>
         <div class="amigos bloque">

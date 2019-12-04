@@ -17,24 +17,23 @@
         <div class="enlaces">
             <a href="/users/my_profile">Perfil</a>
             <a href="/users/friends">Amigos</a>
-            <a href="">Preguntas</a>
+            <a href="/question/show">Preguntas</a>
             <a href="/users/login">Desconectar</a>
-            <a href="">Puntos</a>
+            <a href=""> <%= currentUser.puntuacion %></a>
         </div>
     </header>
     <main>
         <div class="resultados">
             <h2>Resultados de la búsqueda</h2>
+            <% for (var usuario in usuarios) { %>
             <div>
                 <img class="fotoBusqueda" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <span>Bruja Piruja</span>
-                <a href="" class="solicitarAmigo">Solicitar amistad</a>
+                <a href=<%=/users/profile/ +solicitud.idUsuario %>><%= solicitud.nombre %></a>
+                <a href=<%=/users/friends/request_friend/ +usuario.idUsuario %> class="solicitarAmigo">Solicitar
+                    amistad</a>
             </div>
-            <div>
-                <img class="fotoBusqueda" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <span>Brujo Pirujo</span>
-                <a href="" class="solicitarAmigo">Solicitar amistad</a>
-            </div>
+            <% } %>
+
         </div>
     </main>
 </body>

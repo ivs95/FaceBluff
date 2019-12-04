@@ -30,10 +30,7 @@ app.use(middlewareSession);
 
 /*
 
-
 Modificar figura 3 se tiene que ver una lista de fotos.
-Calcular la edad de los usuarios en lugar de poner la fecha a pelo
-
 
 FIGURA5 Y RUTAS --> BUSQUEDA EN EL NOMBRE
 

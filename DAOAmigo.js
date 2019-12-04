@@ -8,16 +8,15 @@ class DAOAmigo {
         this.pool = pool;
     }
 
-    addPeticion(usuario, callback) {
+    addPeticion(idOrigen, idDestino, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "INSERT INTO usuarios (email,nombre,contraseña,genero,fecha,puntuacion) VALUES(?,?,?,?,?,?);";
-                let parametros = [usuario.email, usuario.nombre, usuario.contraseña, usuario.genero, usuario.fecha, 0];
-
+                let sql = "INSERT INTO peticion (idOrigen, idDestino) VALUES(?,?);";
+                let parametros = [idOrigen, idDestino];
                 conexion.query(sql, parametros, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -99,6 +98,29 @@ class DAOAmigo {
 
     }
 
+    isAmigo(idUsuario,idAmigo,callback){
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "SELECT * FROM amigo WHERE (idUsuario = ? AND idAmigo = ?) OR (idUsuario = ? AND idAmigo = ?);";
+                let params = [idUsuario,idAmigo,idAmigo,idUsuario];
+                conexion.query(sql, params, function (err, resultado) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    }
+                    else if (resultado[0] != null) {
+                        callback(null, true);
+                    }
+                    else {
+                        callback(null, false);
+                    }
+                    conexion.release();
+                })
+            }
+        })
+    }
 
     //Devuelve la lista de peticiones que tiene el email del usuario registrado
     readPeticionesByUser(idUsuario, callback){
@@ -109,7 +131,7 @@ class DAOAmigo {
             }
             else {
                 let sql = "SELECT idOrigen FROM peticion WHERE idDestino=?";
-                conexion.query(sql, email, function (err, resultado) {
+                conexion.query(sql, idUsuario, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
