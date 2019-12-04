@@ -1,0 +1,44 @@
+<html>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+
+
+<head>
+    <meta charset="utf-8" />
+    <link href="figura8.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lobster+Two&display=swap" rel="stylesheet">
+    <title>ERROR 404</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <header>
+        <div class="titulo">
+            <h1>FaceBluff</h1>
+        </div>
+        <div class="enlaces">
+            <a href="/users/my_profile">Perfil</a>
+            <a href="/users/friends">Amigos</a>
+            <a href="/question/show">Preguntas</a>
+            <a href="/users/login">Desconectar</a>
+            <a href="">
+                <%= currentUser.puntuacion %>
+            </a>
+        </div>
+    </header>
+    <main>
+        <div class="contenido">
+            <h1>Error 404</h1>
+            <p>Ups no se pudo encontrar la pagina a la que has querido acceder</p>
+        </div>
+
+    </main>
+</body>
+
+</html>

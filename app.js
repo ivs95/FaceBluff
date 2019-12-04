@@ -42,7 +42,7 @@ RUTA PARA SUBIR UNA IMAGEN + EJS + DAOS.
 
 
 
-*/ 
+*/
 
 
 
@@ -82,7 +82,7 @@ app.use(cookieParser());
 
 
 
-app.get("/tasks", function (request, response) {
+app.get("/tasks", function(request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoT.getAllTasks(email, function cb_getAllTasks(err, result) {
         if (err) {
@@ -97,13 +97,12 @@ app.get("/tasks", function (request, response) {
 
 });
 
-app.get("/finish/:taskId", function (request, response) {
+app.get("/finish/:taskId", function(request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoT.markTaskDone(request.params.taskId, function cb_markTaskDone(err, result) {
         if (err) {
             console.log(err.message);
-        }
-        else {
+        } else {
             response.redirect("/tasks");
         }
     });
@@ -111,14 +110,13 @@ app.get("/finish/:taskId", function (request, response) {
 });
 
 
-app.get("/question", function (request, response) {
+app.get("/question", function(request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
     daoP.read5Random(function cb_read5Random(err, result) {
         if (err) {
             console.log(err.message);
-        }
-        else {
+        } else {
             let listaPreguntas = result;
             response.render("figura6", listaPreguntas);
         }
@@ -126,26 +124,23 @@ app.get("/question", function (request, response) {
 
 });
 
-app.get("/question/selected/:idPregunta", function (request, response) {
+app.get("/question/selected/:idPregunta", function(request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
             console.log(err.message);
-        }
-        else {
+        } else {
             var pregunta = result;
             var listaAmigos = daoA.readAmigosByUser(request.session.usuario.email, function cb_readAmigosByUser(err, result) {
                 if (err) {
                     console.log(err.message);
-                }
-                else {
+                } else {
                     let listaAmigos = []
                     result.forEach(idUsuario => {
                         daoU.returnNameWithID(idUsuario, function cb_returnNameWithID(err, result) {
                             if (err) {
                                 console.log(err.message);
-                            }
-                            else {
+                            } else {
                                 listaAmigos.push(result);
                             }
                         })
@@ -158,8 +153,7 @@ app.get("/question/selected/:idPregunta", function (request, response) {
             daoP.readRespuestasIncorrectas(request.params.idPregunta, result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
                     console.log(err.message);
-                }
-                else {
+                } else {
                     let respuestas = [];
                     result.forEach(element => {
                         respuestas.push(element.enunciado);
@@ -174,7 +168,7 @@ app.get("/question/selected/:idPregunta", function (request, response) {
     });
 
 });
-app.post("/question/selected/:idPregunta", function (request, response) {
+app.post("/question/selected/:idPregunta", function(request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
     //If value == otro coger el valor del textArea
@@ -186,18 +180,16 @@ app.post("/question/selected/:idPregunta", function (request, response) {
     //VERY MEGA DUDA RADIOBUTTONS EN EL POST
 });
 
-app.get("/question/answer/:idPregunta", function (request, response) {
+app.get("/question/answer/:idPregunta", function(request, response) {
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
             console.log(err.message);
-        }
-        else {
+        } else {
             var pregunta = result;
             daoP.readRespuestasIncorrectas(request.params.idPregunta, result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
                     console.log(err.message);
-                }
-                else {
+                } else {
                     let respuestas = [];
                     result.forEach(element => {
                         respuestas.push(element.enunciado);
@@ -213,7 +205,7 @@ app.get("/question/answer/:idPregunta", function (request, response) {
     });
 
 });
-app.post("/question/answer/:idPregunta", function (request, response) {
+app.post("/question/answer/:idPregunta", function(request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
     //If value == otro coger el valor del textArea
@@ -227,15 +219,14 @@ app.post("/question/answer/:idPregunta", function (request, response) {
 
 
 //
-app.post("/question/create", function (request, response) {
+app.post("/question/create", function(request, response) {
     let enunciado = request.body.enunciado;
     let respuestas = request.body.respuestas.split("\n");
     ut.createPregunta(enunciado, respuestas.length());
     daoP.createPregunta(pregunta, function cb_readRespuestasIncorrectas(err, result) {
         if (err) {
             console.log(err.message);
-        }
-        else {
+        } else {
             respuestas.forEach(element => {
                 daoP.añadirRespuestaPregunta(result, element, function cb_inserRespuestas(err) {
                     if (err) {
@@ -247,16 +238,17 @@ app.post("/question/create", function (request, response) {
         }
     });
 });
-
+//error 404
+app.use(function(request, response, next) {
+    response.status(404);
+    response.render("error404", { url: request.url });
+});
 
 // Arrancar el servidor
-app.listen(config.port, function (err) {
+app.listen(config.port, function(err) {
     if (err) {
         console.log("ERROR al iniciar el servidor");
-    }
-    else {
+    } else {
         console.log(`Servidor arrancado en el puerto ${config.port}`);
     }
 });
-
-
