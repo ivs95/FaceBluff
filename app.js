@@ -29,18 +29,18 @@ app.use(middlewareSession);
 
 
 /*
+FALTA POR HACER URGENTE
+MODIFICAR USUARIO
+ERROR 404 EJS. 
+VALIDACION DE FORMULARIOS.
 
+
+ESTO YA PARA LUEGO
 Modificar figura 3 se tiene que ver una lista de fotos.
-
-FIGURA5 Y RUTAS --> BUSQUEDA EN EL NOMBRE
-
 AÑADIR EN LA FIGURA 3 boton de subir imagen.
-
 RUTA PARA SUBIR UNA IMAGEN + EJS + DAOS.
 
-ERROR 404 EJS. 
 
-VALIDACION DE FORMULARIOS.
 
 */ 
 
