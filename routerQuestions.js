@@ -1,3 +1,5 @@
+const express = require("express");
+app = express();
 const routerQuestions = express.Router();
 
 app.use(function accessControl(request, response, next) {
@@ -236,3 +238,4 @@ routerQuestions.post("/create", function (request, response) {
 });
 
 module.exports = routerQuestions;
+

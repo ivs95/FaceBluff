@@ -1,14 +1,14 @@
 
-create table usuario {
+create table usuarios (
   idUsuario int NOT NULL UNIQUE AUTO_INCREMENT, 
   nombre varchar(255) NOT NULL ,
   email varchar(255) NOT NULL unique,
   contraseña varchar(255) NOT NULL,
   genero varchar(255) NOT NULL ,
-  fecha (opcional) date ,
+  fecha date ,
   puntuacion double ,
-  PRIMARY KEY (idUsuario),
-};
+  PRIMARY KEY (idUsuario)
+);
 
 create table amigo {
   idUsuario varchar(255) NOT NULL,

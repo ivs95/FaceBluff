@@ -1,11 +1,6 @@
 // app.js
-const config = require("./config");
-const DAOUsuarios = require("./DAOUsuario");
-const DAOPreguntas = require("./DAOPreguntas");
-const DAONotificacion = require("./DAONotificacion");
-const DAOAmigo = require("./DAOAmigo")
-const utils = require("./utils");
-const path = require("path");
+
+/*const path = require("path");
 const mysql = require("mysql");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -14,11 +9,15 @@ const cookieParser = require("cookie-parser");
 const express_session = require("express-session");
 const express_mysqlsession = require("express-mysql-session");
 
-const MySQLStore = express_mysqlsession(express_session);
-const sessionStore = new MySQLStore(config.mysqlConfig);
-const middlewareSession = session({ saveUninitialized: false, secret: "foobar34", resave: false, store: sessionStore });
-app.use(middlewareSession);
-
+//const MySQLStore = express_mysqlsession(express_session);
+//const pool = mysql.createPool(config.mysqlConfig);
+//const sessionStore = new MySQLStore(config.mysqlConfig);
+const middlewareSession = MySQLStore({
+     saveUninitialized: false, 
+     secret: "foobar34", 
+     resave: false,
+      store: sessionStore });
+app.use(middlewareSession);*/
 
 
 
@@ -50,6 +49,24 @@ RUTA PARA SUBIR UNA IMAGEN + EJS + DAOS.
 
 
 
+// Crear un servidor Express.js
+
+
+// Crear un pool de conexiones a la base de datos de MySQL
+const config = require("./config");
+const DAOUsuarios = require("./DAOUsuario");
+const DAOPreguntas = require("./DAOPreguntas");
+const DAOAmigo = require("./DAOAmigo")
+const utils = require("./utils");
+const path = require("path");
+const mysql = require("mysql");
+const express = require("express");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const fs = require("fs");
+const express_session = require("express-session");
+const express_mysqlsession = require("express-mysql-session");
+
 
 
 
@@ -59,20 +76,31 @@ const app = express();
 // Crear un pool de conexiones a la base de datos de MySQL
 const pool = mysql.createPool(config.mysqlConfig);
 
-// Crear una instancia de DAOUsuarios
+// Crear una instancia de DAOUsers
 const daoU = new DAOUsuarios(pool);
 const daoA = new DAOAmigo(pool);
 const daoP = new DAOPreguntas(pool);
 const ut = new utils();
-const ficherosEstaticos = path.join(__dirname, "public");
+
+//crear routers
 const routerUsers = require("./routerUsers")
 const routerQuestions = require("./routerQuestions")
 
+const ficherosEstaticos = path.join(__dirname, "public");
+const MySQLStore = express_mysqlsession(express_session);
+const sessionStore = new MySQLStore(config.mysqlConfig);
+const middlewareSession = express_session({
+    saveUninitialized: false, secret: "foobar34",
+    resave: false,
+    store: sessionStore
+});
+app.use(middlewareSession);
+
+
+// Crear una instancia de DAOUsuarios
+
 app.use("/users", routerUsers)
 app.use("/question", routerQuestions)
-
-
-let email = "usuario@ucm.es";
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -121,7 +149,6 @@ app.get("/question", function(request, response) {
             response.render("figura6", listaPreguntas);
         }
     });
-
 });
 
 app.get("/question/selected/:idPregunta", function(request, response) {
@@ -238,6 +265,7 @@ app.post("/question/create", function(request, response) {
         }
     });
 });
+
 //error 404
 app.use(function(request, response, next) {
     response.status(404);

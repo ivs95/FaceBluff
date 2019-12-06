@@ -22,13 +22,14 @@ class utils {
 
     createPregunta(enunciado, numRespuestas){
         let pregunta = {
-            enunciado = enunciado,
-            numRespuestasInicial = numRespuestas
+            enunciado : enunciado,
+            numRespuestasInicial : numRespuestas
         }
         return pregunta;
     }
     
     calculateAge(birthday) {
+        console.log(birthday);
         var birthday_arr = birthday.split("/");
         var birthday_date = new Date(birthday_arr[2], birthday_arr[1] - 1, birthday_arr[0]);
         var ageDifMs = Date.now() - birthday_date.getTime();

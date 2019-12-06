@@ -15,11 +15,12 @@ class DAOUsuario {
             }
             else {
                 let sql = "INSERT INTO usuarios (email,nombre,contraseña,genero,fecha,puntuacion) VALUES(?,?,?,?,?,?);";
-                let parametros = [usuario.email, usuario.nombre, usuario.contraseña, usuario.genero, usuario.fecha, 0];
-
+                let parametros = [usuario.email, usuario.nombre, usuario.password, usuario.sexo, usuario.fecha, 0];
+                
                 conexion.query(sql, parametros, function (err, resultado) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        //callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     }
                     else {
                         callback(null);
@@ -29,22 +30,31 @@ class DAOUsuario {
             }
         })
     }
-    updateUser(usuario, callback) {
+    updateUser(usuario,id, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "UPDATE usuarios SET email=" + usuario.email + "  nombre=" + usuario.nombre + " contraseña=" + usuario.contraseña +
-                    " genero =" + usuario.genero + "fecha=" + usuario.fecha + " where idUsuario = ?";
-                let parametros = [usuario.id];
-                conexion.query(sql, parametros, function (err, resultado) {
+                console.log(usuario);
+                let sql = "UPDATE usuarios SET email='" + usuario.email + "',nombre='" + usuario.nombre + "',contraseña='" + usuario.password +
+                    "',genero ='" + usuario.sexo + "',fecha='" + usuario.fecha + "' WHERE idUsuario ="+ id+";";
+                    console.log(sql);
+                
+                conexion.query(sql, function (err, resultado) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     }
                     else {
-                        callback(null);
+                        var result ={
+                            password :usuario.password,
+                            email : usuario.email,
+                            nombre : usuario.nombre,
+                            fecha :  usuario.fecha,
+                            genero : usuario.genero
+                        }
+                        callback(null, result);
                     }
                     conexion.release();
                 })
@@ -62,9 +72,11 @@ class DAOUsuario {
                 let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE email=? ";
                 conexion.query(sql, email, function (err, resultado) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                       // callback(new Error("Error de acceso a la base de datos"));
+                       callback(err);
                     }
                     else if (resultado) {
+                        console.log(resultado)
                         callback(null, resultado);
                     }
                     else {
@@ -211,16 +223,20 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT email, contraseña FROM usuarios WHERE email = ? AND contraseña = ?;";
+                //console.log(email);
+              //  console.log(password);
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE email = ? AND contraseña = ?;";
                 let params = [email, password];
                 conexion.query(sql, params, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
-                    else if (resultado[0] != null) {
-                        callback(null, true);
+                    else if (resultado != null) {
+                        
+                        callback(null, resultado);
                     }
                     else {
+                        console.log("xd");
                         callback(null, false);
                     }
                     conexion.release();

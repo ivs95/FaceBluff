@@ -19,26 +19,26 @@
                 <a href="/users/friends">Amigos</a>
                 <a href="/question/show">Preguntas</a>
                 <a href="/users/login">Desconectar</a>
-                <a href=""> <%= currentUser.puntuacion %></a>
+                <a href=""> <%= usuario.puntuacion %></a>
         </div>
     </header>
     <main>
         <div class="contenido">
             <h2 class="pagina">
-                <%= currentUser.nombre %>
+                <%= usuario.nombre %>
             </h2>
-            <form method="POST" action="/users/new_user" class="formulario">
+            <form method="POST" action="/users/update_user" class="formulario">
                 <div class="dato">
                     <div class="tag">Email</div>
-                    <div class="input"><input type="text" name="email"></div>
+                    <div class="input"><input type="text" name="email" value=<%=usuario.email %>></div>
                 </div>
                 <div class="dato">
                     <div class="tag">Contraseña</div>
-                    <div class="input"><input type="password" name="password"></div>
+                    <div class="input"><input type="password" name="password" value=<%= usuario.password %>></div>
                 </div>
                 <div class="dato">
                     <div class="tag">Nombre completo</div>
-                    <div class="input"><input type="text" name="nombre"></div>
+                    <div class="input"><input type="text" name="nombre" value=<%= usuario.nombre %>></div>
                 </div>
                 <div class="dato">
                     <div class="tag sexo">
@@ -49,13 +49,13 @@
                 </div>
                 <div class="dato">
                     <div class="tag">Fecha de nacimiento</div>
-                    <div class="input"><input type="date" name="fecha"></div>
+                    <div class="input"><input type="date" name="fecha" value=<%= usuario.fecha %>></div>
                 </div>
                 <div class="dato">
                     <div class="tag">Imagen de perfil</div>
                     <div class="input"><input type="file" name="foto"></div>
                 </div>
-                <input type="submit" value="Crear usuario" class="login">
+                <input type="submit" value="Modificar usuario" class="login">
             </form>
         </div>
 
