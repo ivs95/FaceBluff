@@ -28,8 +28,8 @@
             <% for (var usuario in usuarios) { %>
             <div>
                 <img class="fotoBusqueda" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <a href=<%=/users/profile/ +solicitud.idUsuario %>><%= solicitud.nombre %></a>
-                <a href=<%=/users/friends/request_friend/ +usuario.idUsuario %> class="solicitarAmigo">Solicitar
+                <a href=<%="/users/profile/" +solicitud.idUsuario %>><%= solicitud.nombre %></a>
+                <a href=<%="/users/friends/request_friend/" +usuario.idUsuario %> class="solicitarAmigo">Solicitar
                     amistad</a>
             </div>
             <% } %>

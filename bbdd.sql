@@ -10,65 +10,64 @@ create table usuarios (
   PRIMARY KEY (idUsuario)
 );
 
-create table amigo {
-  idUsuario varchar(255) NOT NULL,
-  idAmigo varchar(255) NOT NULL,
+create table amigos (
+  idUsuario int NOT NULL,
+  idAmigo int NOT NULL,
   PRIMARY KEY (idUsuario, idAmigo),
-  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
-  FOREIGN KEY (idAmigo) REFERENCES usuario(idUsuario)
-};
+  FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),
+  FOREIGN KEY (idAmigo) REFERENCES usuarios(idUsuario)
+);
 
-create table peticion {
+create table peticiones (
   idOrigen int NOT NULL ,
   idDestino int NOT NULL,
   PRIMARY KEY (idOrigen, idDestino),
-  FOREIGN KEY (idOrigen) REFERENCES usuario(idUsuario),
-  FOREIGN KEY (idDestino) REFERENCES usuario(idUsuario)
-};
+  FOREIGN KEY (idOrigen) REFERENCES usuarios(idUsuario),
+  FOREIGN KEY (idDestino) REFERENCES usuarios(idUsuario)
+);
 
-create table preguntas {
+create table preguntas (
   idPregunta int NOT NULL UNIQUE AUTO_INCREMENT,
   enunciado LONGTEXT NOT NULL,
   numRespuestasInicial int ,
-  PRIMARY KEY (idPregunta),
-};
+  PRIMARY KEY (idPregunta)
+);
 
 
-create table preguntaRespondida {
+create table preguntasRespondidas (
   idPregunta int NOT NULL UNIQUE AUTO_INCREMENT,
-  idUsuario int  NOT NULL ,
-  respuesta LONGTEXT
-
+  idUsuario int  NOT NULL,
+  respuesta LONGTEXT,
   PRIMARY KEY (idUsuario, idPregunta),
-  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
+  FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),
   FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
-}
+);
 
 
-create table respuestas{ 
+create table respuestas( 
     idPregunta int NOT NULL ,
     respuesta LONGTEXT,
     FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
-}
+);
 
-create table preguntaAmigoRespondida {
+create table preguntasAmigoRespondidas (
     idUsuario int NOT NULL,
     idAmigo int NOT NULL,
     idPregunta int NOT NULL,
     acertada bit,
 
     PRIMARY KEY (idUsuario, idAmigo, idPregunta),
-    FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
-    FOREIGN KEY (idAmigo) REFERENCES usuario(idUsuario)
+    FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),
+    FOREIGN KEY (idAmigo) REFERENCES usuarios(idUsuario),
     FOREIGN KEY (idPregunta) REFERENCES preguntas(idPregunta)
+);
 
-}
-create table imagenes {
+create table imagenes (
   idUsuario int not null,
   imagen varchar(255),
-  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
+  FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario)
 
 
-}
+);
 
 

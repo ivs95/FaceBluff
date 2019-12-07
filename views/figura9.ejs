@@ -29,7 +29,7 @@
             </h2>
 
             <div class="main">
-                <form action=<%=question/answerToOther/ + pregunta.idPregunta + / + amigo.idAmigo %> method="post">
+                <form action=<%="question/answerToOther/" + pregunta.idPregunta + "/" + amigo.idAmigo %> method="post">
                     <h3>¿Que crees que opina <%= amigo.nombre %>?</h3>
                     <% respuestas.forEach(element => { %>
                     <section class="pregunta">

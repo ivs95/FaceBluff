@@ -29,9 +29,10 @@
             </h2>
 
             <div class="main">
+
                 <% for (var pregunta in listaPreguntas) { %>
                 <section class="pregunta">
-                    <a href = <%=/question/selected/ + pregunta.id% > class> <%= pregunta.enunciado %></a>
+                    <a href = <%="/question/selected/" +pregunta.id %>> <%= pregunta.enunciado %></a>
                 </section>
                 <% } %>
             </div>

@@ -19,7 +19,6 @@ const ficherosEstaticos = path.join(__dirname, "public");
 
 
 const ut = new utils();
-
 const pool = mysql.createPool(config.mysqlConfig);
 
 const daoU = new DAOUsuarios(pool);
@@ -77,8 +76,8 @@ routerUsers.post("/login", function (request, response) {
         }
         else {
             request.session.currentUser = result[0];
-            response.locals.usuario = request.session.currentUser;
-            response.redirect("/users/profile/" + response.locals.usuario.idUsuario);
+            request.app.locals.currentUser = request.session.currentUser;
+            response.redirect("/users/my_profile");
         }
     });
 
@@ -142,15 +141,7 @@ routerUsers.post("/update_user", accessControl, function (request, response) {
 
         }
         else if (result != null) {
-
-            request.session.currentUser.email = result.email;
-            request.session.currentUser.contraseña = result.password;
-            request.session.currentUser.nombre = result.nombre;
-            request.session.currentUser.fecha = result.fecha;
-            request.session.currentUser.genero = result.genero;
-
-            console.log(request.session.currentUser)
-            console.log(result)
+            request.session.currentUser = result;
 
             response.redirect("/users/profile/" + request.session.currentUser.idUsuario);
         }
@@ -159,12 +150,12 @@ routerUsers.post("/update_user", accessControl, function (request, response) {
 });
 
 
-routerUsers.get("/new_user", accessControl, function (request, response) {
+routerUsers.get("/new_user", function (request, response) {
     response.render("figura2")
 });
 
 
-routerUsers.post("/new_user", accessControl, function (request, response) {
+routerUsers.post("/new_user", function (request, response) {
     var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha, request.body.foto);
     daoU.createUser(usuario, function cb_crearUsuario(err) {
         if (err) {
@@ -192,7 +183,8 @@ routerUsers.post("/search", function (request, response) {
 
 
 routerUsers.get("/friends", function (request, response) {
-    let usuario = request.session.usuario;
+    let usuario = request.session.currentUser;
+    console.log(response.locals.currentUser);
     let listaPeticiones = [];
     let listaAmigos = [];
 
@@ -231,7 +223,7 @@ routerUsers.get("/friends", function (request, response) {
 
 routerUsers.get("/friends/request_friend/:idUsuario", function (request, response) {
 
-    daoA.isAmigo(request.session.usuario.idUsuario, request.params.idUsuario, function cb_isAmigo(err, result) {
+    daoA.isAmigo(request.session.currentUser.idUsuario, request.params.idUsuario, function cb_isAmigo(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
@@ -242,7 +234,7 @@ routerUsers.get("/friends/request_friend/:idUsuario", function (request, respons
                         response.render("error500", { mensaje: err.message });
                     }
                     else if (result == null) {
-                        daoA.addPeticion(request.session.usuario.idUsuario, request.params.idUsuario), function cb_deletePeticion(err) {
+                        daoA.addPeticion(request.session.currentUser.idUsuario, request.params.idUsuario), function cb_deletePeticion(err) {
                             if (err) {
                                 response.render("error500", { mensaje: err.message });
                             }
@@ -259,12 +251,12 @@ routerUsers.get("/friends/request_friend/:idUsuario", function (request, respons
 routerUsers.get("/friends/add_friend/:idUsuario", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
-    daoA.deletePeticion(request.params.idUsuario, request.session.usuario.idUsuario, function cb_deletePeticion(err) {
+    daoA.deletePeticion(request.params.idUsuario, request.session.currentUser.idUsuario, function cb_deletePeticion(err) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
         else {
-            daoA.addFriend(request.session.usuario.idUsuario, request.params.idUsuario, function cb_addFriend(err) {
+            daoA.addFriend(request.session.currentUser.idUsuario, request.params.idUsuario, function cb_addFriend(err) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 }
@@ -280,7 +272,7 @@ routerUsers.get("/friends/add_friend/:idUsuario", function (request, response) {
 
 routerUsers.get("/friends/refuse_friend/:idUsuario", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
-    daoA.deletePeticion(request.params.idUsuario, request.session.usuario.email, function cb_deletePeticion(err) {
+    daoA.deletePeticion(request.params.idUsuario, request.session.currentUser.email, function cb_deletePeticion(err) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }

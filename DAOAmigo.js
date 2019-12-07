@@ -15,7 +15,7 @@ class DAOAmigo {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "INSERT INTO peticion (idOrigen, idDestino) VALUES(?,?);";
+                let sql = "INSERT INTO peticiones (idOrigen, idDestino) VALUES(?,?);";
                 let parametros = [idOrigen, idDestino];
                 conexion.query(sql, parametros, function (err, resultado) {
                     if (err) {
@@ -37,7 +37,7 @@ class DAOAmigo {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "INSERT INTO amigo (idUsuario, idAmigo) VALUES(?,?);";
+                let sql = "INSERT INTO amigos (idUsuario, idAmigo) VALUES(?,?);";
                 let parametros = [idUsuario, idAmigo];
                 conexion.query(sql, parametros, function (err) {
                     if (err) {
@@ -60,7 +60,7 @@ class DAOAmigo {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "DELETE FROM peticion WHERE idOrigen = ? AND idDestino = ?";
+                let sql = "DELETE FROM peticiones WHERE idOrigen = ? AND idDestino = ?";
                 let parametros = [idOrigen, idDestino];
                 conexion.query(sql, parametros, function (err, resultado) {
                     if (err) {
@@ -83,7 +83,7 @@ class DAOAmigo {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT idAmigo FROM amigo WHERE idUsuario = ? ";
+                let sql = "SELECT idAmigo FROM amigos WHERE idUsuario = ? ";
                 conexion.query(sql, [idUsuario], function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -104,7 +104,7 @@ class DAOAmigo {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT * FROM amigo WHERE (idUsuario = ? AND idAmigo = ?) OR (idUsuario = ? AND idAmigo = ?);";
+                let sql = "SELECT * FROM amigos WHERE (idUsuario = ? AND idAmigo = ?) OR (idUsuario = ? AND idAmigo = ?);";
                 let params = [idUsuario,idAmigo,idAmigo,idUsuario];
                 conexion.query(sql, params, function (err, resultado) {
                     if (err) {
@@ -130,7 +130,7 @@ class DAOAmigo {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT idOrigen FROM peticion WHERE idDestino=?";
+                let sql = "SELECT idOrigen FROM peticiones WHERE idDestino=?";
                 conexion.query(sql, idUsuario, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));

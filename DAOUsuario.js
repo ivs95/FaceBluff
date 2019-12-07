@@ -69,7 +69,7 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE email=? ";
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE email=? ";
                 conexion.query(sql, email, function (err, resultado) {
                     if (err) {
                        // callback(new Error("Error de acceso a la base de datos"));
@@ -96,7 +96,7 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE nombre=? ";
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE nombre=? ";
                 conexion.query(sql, name, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -120,7 +120,7 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM Usuarios WHERE idUsuario=? ";
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE idUsuario=? ";
                 conexion.query(sql, id, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -145,7 +145,7 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT idUsuario, nombre FROM Usuarios WHERE idUsuario=? ";
+                let sql = "SELECT idUsuario, nombre FROM usuarios WHERE idUsuario=? ";
                 conexion.query(sql, name, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -223,8 +223,6 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                //console.log(email);
-              //  console.log(password);
                 let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE email = ? AND contraseña = ?;";
                 let params = [email, password];
                 conexion.query(sql, params, function (err, resultado) {

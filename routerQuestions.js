@@ -1,24 +1,59 @@
+const DAOUsuarios = require("./DAOUsuario");
+const DAOPreguntas = require("./DAOPreguntas");
+const DAOAmigo = require("./DAOAmigo")
+const config = require("./config");
+const utils = require("./utils");
 const express = require("express");
-app = express();
+const path = require("path");
+const mysql = require("mysql");
+
+const bodyParser = require("body-parser");
+const fs = require("fs");
+
 const routerQuestions = express.Router();
 
-app.use(function accessControl(request, response, next) {
-    daoU.isUserCorrect(request.session.usuario.email, request.session.usuario.contraseña, function cB_isUserCorrect(err, result) {
-        if (err) {
-            response.render("error500", { mensaje: err.message });
-        }
-        else if (result == false) {
-            request.session.errorMsg = "Debes estar logueado para acceder";
-            response.redirect("/users/login");
+const ficherosEstaticos = path.join(__dirname, "public");
 
-        }
-        else {
-            next();
-        }
-    });
-});
 
-routerQuestions.get("/show", function (request, response) {
+
+const ut = new utils();
+
+const pool = mysql.createPool(config.mysqlConfig);
+
+const daoU = new DAOUsuarios(pool);
+const daoA = new DAOAmigo(pool);
+const daoP = new DAOPreguntas(pool);
+routerQuestions.use(express.static(ficherosEstaticos));
+
+
+
+function accessControl(request, response, next) {
+
+
+    if (request.session.currentUser != null) {
+
+        daoU.isUserCorrect(request.session.currentUser.email, request.session.currentUser.contraseña, function cB_isUserCorrect(err, result) {
+            if (err) {
+                response.render("error500", { mensaje: err.message });
+            }
+            else if (result == false) {
+                request.session.errorMsg = "Debes estar logueado para acceder";
+                response.redirect("/users/login");
+
+            }
+            else {
+                next();
+            }
+        });
+    }
+    else {
+        request.session.errorMsg = "Debes estar logueado para acceder";
+        response.redirect("/users/login");
+    }
+
+};
+
+routerQuestions.get("/show",accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
     daoP.read5Random(function cb_read5Random(err, result) {
@@ -33,7 +68,7 @@ routerQuestions.get("/show", function (request, response) {
 
 });
 
-routerQuestions.get("/selected/:idPregunta", function (request, response) {
+routerQuestions.get("/selected/:idPregunta",accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
@@ -81,7 +116,7 @@ routerQuestions.get("/selected/:idPregunta", function (request, response) {
     });
 
 });
-routerQuestions.post("/selected/:idPregunta", function (request, response) {
+routerQuestions.post("/selected/:idPregunta",accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
     //If value == otro coger el valor del textArea
@@ -93,7 +128,7 @@ routerQuestions.post("/selected/:idPregunta", function (request, response) {
     //VERY MEGA DUDA RADIOBUTTONS EN EL POST
 });
 
-routerQuestions.get("/answer/:idPregunta", function (request, response) {
+routerQuestions.get("/answer/:idPregunta",accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
@@ -121,7 +156,7 @@ routerQuestions.get("/answer/:idPregunta", function (request, response) {
     });
 
 });
-routerQuestions.post("/answer/:idPregunta", function (request, response) {
+routerQuestions.post("/answer/:idPregunta",accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
     //If value == otro coger el valor del textArea
@@ -132,7 +167,7 @@ routerQuestions.post("/answer/:idPregunta", function (request, response) {
     });
 });
 
-routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", function (request, response) {
+routerQuestions.get("/answerToOther/:idPregunta/:idAmigo",accessControl, function (request, response) {
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
             console.log(err.message);
@@ -182,7 +217,7 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", function (request, re
     });
 });
 
-routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", function (request, response) {
+routerQuestions.post("/answerToOther/:idPregunta/:idAmigo",accessControl, function (request, response) {
     var respuestaElegida = request.body.seleccion;
     daoP.readRespuestaCorrecta(request.param.idPregunta, request.param.idAmigo, function cb_readRespuestaCorrecta(err, result) {
         if (err) {
@@ -216,7 +251,7 @@ routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", function (request, r
 });
 
 //
-routerQuestions.post("/create", function (request, response) {
+routerQuestions.post("/create",accessControl, function (request, response) {
     let enunciado = request.body.enunciado;
     let respuestas = request.body.respuestas.split("\n");
     ut.createPregunta(enunciado, respuestas.length());

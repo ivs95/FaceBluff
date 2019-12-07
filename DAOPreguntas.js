@@ -82,7 +82,7 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "INSERT INTO preguntaRespondida (idPRegunta,idUsuario,respuesta) VALUES (?,?,?);";
+                let sql = "INSERT INTO preguntasRespondidas (idPRegunta,idUsuario,respuesta) VALUES (?,?,?);";
                 let parametros = [idPregunta, idUsuario, respuestaCorrecta];
                 conexion.query(sql, parametros, function(err) {
                     if (err) {
@@ -103,8 +103,8 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT idPregunta,enunciado,numRespuestasInicial,respuestaCorrecta FROM preguntas ORDER BY RAND() LIMIT 5";
-                conexion.query(sql, idPregunta, function(err, resultado) {
+                let sql = "SELECT idPregunta,enunciado,numRespuestasInicial FROM preguntas ORDER BY RAND() LIMIT 5";
+                conexion.query(sql, function(err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     } else if (resultado) {
@@ -125,7 +125,7 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT * FROM preguntaRespondida WHERE idPregunta=? AND idUsuario=?";
+                let sql = "SELECT * FROM preguntasRespondidas WHERE idPregunta=? AND idUsuario=?";
                 let parametros = [idPregunta, idUsuario];
                 conexion.query(sql, parametros, function(err, resultado) {
                     if (err) {
