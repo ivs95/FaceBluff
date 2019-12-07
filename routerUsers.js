@@ -174,8 +174,8 @@ routerUsers.post("/new_user", function (request, response) {
 
 
 routerUsers.post("/search", function (request, response) {
-    let caracter = request.body.busqueda;
-    daoU.usersWithCharInName(caracter, function cb_usersFindChar(err, result) {
+    let caracteres = request.body.busqueda;
+    daoU.usersWithCharInName(request.session.currentUser.idUsuario,caracteres, function cb_usersFindChar(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
@@ -188,7 +188,6 @@ routerUsers.post("/search", function (request, response) {
 
 routerUsers.get("/friends", function (request, response) {
     let usuario = request.session.currentUser;
-    console.log(response.locals.currentUser);
     let listaPeticiones = [];
     let listaAmigos = [];
 

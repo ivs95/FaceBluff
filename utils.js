@@ -36,9 +36,7 @@ class utils {
         var birthday_date = new Date(birthday_arr[0], birthday_arr[1] - 1, birthday_arr[2]);
         var ageDifMs = Date.now() - birthday_date.getTime();
         var ageDate = new Date(ageDifMs);
-        var retorno = Math.abs(ageDate.getUTCFullYear() - 1970);
-        console.log(retorno);
-        return retorno;
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
 }

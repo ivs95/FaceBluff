@@ -110,3 +110,8 @@ main a {
     border-radius: 5px;
     padding: 0 0.5em 0 0.5em;
 }
+
+.formulario{
+    display: flex;
+    padding-left: 30%;
+}

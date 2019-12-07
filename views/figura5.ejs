@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <link href="figura5.css" rel="stylesheet">
+    <link href="css/figura5.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lobster+Two&display=swap" rel="stylesheet">
 </head>
 
@@ -19,20 +19,19 @@
             <a href="/users/friends">Amigos</a>
             <a href="/question/show">Preguntas</a>
             <a href="/users/login">Desconectar</a>
-            <a href=""> <%= currentUser.puntuacion %></a>
+            <a href=""> <%= currentUser.puntuacion %> puntos</a>
         </div>
     </header>
     <main>
         <div class="resultados">
             <h2>Resultados de la búsqueda</h2>
-            <% for (var usuario in usuarios) { %>
+            <% usuarios.forEach(function (element) { %>
             <div>
                 <img class="fotoBusqueda" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <a href=<%="/users/profile/" +solicitud.idUsuario %>><%= solicitud.nombre %></a>
-                <a href=<%="/users/friends/request_friend/" +usuario.idUsuario %> class="solicitarAmigo">Solicitar
-                    amistad</a>
+                <a href=<%="/users/profile/" +element.idUsuario %>><%= element.nombre %></a>
+                <a href=<%="/users/friends/request_friend/" +element.idUsuario %> class="solicitarAmigo">Solicitar amistad</a>
             </div>
-            <% } %>
+            <% }); %>
 
         </div>
     </main>

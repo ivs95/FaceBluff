@@ -180,35 +180,24 @@ class DAOUsuario {
                     }
                     conexion.release();
                 })
-            }
+            } 
         })
     }
-
-    usersWithCharInName(caracter, callback) {
+  
+    usersWithCharInName(idUsuario, caracteres, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT * FROM usuarios;";
-                conexion.query(sql, function (err, resultado) {
+                let sql = "SELECT * FROM usuarios WHERE nombre LIKE '%"+ caracteres+"%' AND idUsuario!=?;";
+                conexion.query(sql,idUsuario, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
-                    else {
-                        retorno = [];
-                        resultado.forEach(element => {
-                            let sql = "SELECT CHARINDEX(?, element.nombre) AS MatchPosition";
-                            conexion.query(sql,caracter, function (err, resultado) {
-                                if (err) {
-                                    callback(new Error("Error de acceso a la base de datos"));
-                                }
-                                if (resultado.MatchPosition != 0) {
-                                    retorno.push(element);
-                                }
-                            });
-                        });
-                        callback(null, retorno);
+                    else if (resultado){ 
+                        
+                        callback(null, resultado);
                     }
                 });
                 conexion.release();
@@ -234,7 +223,6 @@ class DAOUsuario {
                         callback(null, resultado);
                     }
                     else {
-                        console.log("xd");
                         callback(null, false);
                     }
                     conexion.release();

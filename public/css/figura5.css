@@ -69,6 +69,10 @@ main {
     white-space: pre;
 }
 
+.solicitarAmigo{
+    white-space: nowrap;
+}
+
 body {
     background: #ffff99;
 }
