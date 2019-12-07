@@ -27,14 +27,18 @@ class utils {
         }
         return pregunta;
     }
+
     
     calculateAge(birthday) {
-        console.log(birthday);
+        var isoDate = new Date(birthday).toISOString();        
+        birthday = isoDate.slice(0,10);
         var birthday_arr = birthday.split("-");
-        var birthday_date = new Date(birthday_arr[2], birthday_arr[1] - 1, birthday_arr[0]);
+        var birthday_date = new Date(birthday_arr[0], birthday_arr[1] - 1, birthday_arr[2]);
         var ageDifMs = Date.now() - birthday_date.getTime();
         var ageDate = new Date(ageDifMs);
-        return Math.abs(ageDate.getUTCFullYear() - 1970);
+        var retorno = Math.abs(ageDate.getUTCFullYear() - 1970);
+        console.log(retorno);
+        return retorno;
     }
 
 }
