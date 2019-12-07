@@ -11,7 +11,7 @@ const mysql = require("mysql");
 
 const bodyParser = require("body-parser");
 const fs = require("fs");
-
+const expressValidator = require("express-validator");
 const routerUsers = express.Router();
 
 const ficherosEstaticos = path.join(__dirname, "public");
@@ -25,6 +25,9 @@ const daoU = new DAOUsuarios(pool);
 const daoA = new DAOAmigo(pool);
 const daoP = new DAOPreguntas(pool);
 routerUsers.use(express.static(ficherosEstaticos));
+routerUsers.use(expressValidator);
+
+
 function accessControl(request, response, next) {
 
 

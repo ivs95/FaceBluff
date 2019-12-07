@@ -6,9 +6,9 @@ const utils = require("./utils");
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql");
-
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const expressValidator = require("express-validator");
 
 const routerQuestions = express.Router();
 
@@ -27,7 +27,7 @@ const daoP = new DAOPreguntas(pool);
 routerQuestions.use(express.static(ficherosEstaticos));
 
 routerQuestions.use(bodyParser.urlencoded({ extended: false }));
-
+routerQuestions.use(expressValidator);
 
 function accessControl(request, response, next) {
 
