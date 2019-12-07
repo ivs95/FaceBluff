@@ -15,8 +15,8 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "INSERT INTO preguntas (enunciado,numRespestaInicial) VALUES(?,?);";
-                let parametros = [pregunta.enunciado, pregunta.numRespestaInicial];
+                let sql = "INSERT INTO preguntas (enunciado,numRespuestasInicial) VALUES(?,?);";
+                let parametros = [pregunta.enunciado, pregunta.numRespuestasInicial];
 
                 conexion.query(sql, parametros, function(err, resultado) {
                     if (err) {
