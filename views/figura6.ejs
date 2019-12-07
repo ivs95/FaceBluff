@@ -19,7 +19,7 @@
             <a href="/users/friends">Amigos</a>
             <a href="/question/show">Preguntas</a>
             <a href="/users/login">Desconectar</a>
-            <a href=""> <%= currentUser.puntuacion %></a>
+           
         </div>
     </header>
     <main>
@@ -30,16 +30,17 @@
 
             <div class="main">
 
-                <% for (var pregunta in listaPreguntas) { %>
+                <% listaPreguntas.forEach(function(element) { %>
                 <section class="pregunta">
-                    <a href = <%="/question/selected/" +pregunta.id %>> <%= pregunta.enunciado %></a>
+                    <a href ="<%="/question/selected/" + element.idPregunta %>"> <%= element.enunciado %></a>
                 </section>
-                <% } %>
+                <% }); %>
+                
             </div>
             <br>
             ¡Añade tus preguntas!
 
-            <a href="">Crear nueva pregunta</a>
+            <a href="/question/create">Crear nueva pregunta</a>
         </div>
         </div>
 

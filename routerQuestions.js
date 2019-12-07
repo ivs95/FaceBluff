@@ -31,7 +31,7 @@ function accessControl(request, response, next) {
 
 
     if (request.session.currentUser != null) {
-
+        console.log(request.session.currentUser.email);
         daoU.isUserCorrect(request.session.currentUser.email, request.session.currentUser.contraseña, function cB_isUserCorrect(err, result) {
             if (err) {
                 response.render("error500", { mensaje: err.message });
@@ -62,7 +62,9 @@ routerQuestions.get("/show",accessControl, function (request, response) {
         }
         else {
             let listaPreguntas = result;
-            response.render("figura6", listaPreguntas);
+            console.log(listaPreguntas);
+            response.render("figura6", {listaPreguntas : listaPreguntas});
+
         }
     });
 
@@ -76,7 +78,7 @@ routerQuestions.get("/selected/:idPregunta",accessControl, function (request, re
         }
         else {
             var pregunta = result;
-            var listaAmigos = daoA.readAmigosByUser(request.session.usuario.email, function cb_readAmigosByUser(err, result) {
+            var listaAmigos = daoA.readAmigosByUser(request.session.currentUser.email, function cb_readAmigosByUser(err, result) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 }
@@ -97,7 +99,7 @@ routerQuestions.get("/selected/:idPregunta",accessControl, function (request, re
                 }
             })
 
-            daoP.readRespuestasIncorrectas(request.params.idPregunta, result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
+            daoP.readRespuestasIncorrectas(request.params.idPregunta,result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 }
@@ -247,10 +249,15 @@ routerQuestions.post("/answerToOther/:idPregunta/:idAmigo",accessControl, functi
     //Coger la respuesta del radioButton, comparar si es correcta
     //Crear la notificacion correspondiente, mostrada por defecto se pone a 0
     //Aumentar la puntuacion del usuario si ha acertado
-
 });
 
 //
+
+
+routerQuestions.get("/create",accessControl,function(request, response){
+    
+    response.render("figura10");
+});
 routerQuestions.post("/create",accessControl, function (request, response) {
     let enunciado = request.body.enunciado;
     let respuestas = request.body.respuestas.split("\n");

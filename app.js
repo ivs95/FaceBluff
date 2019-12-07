@@ -276,6 +276,7 @@ app.listen(config.port, function(err) {
     if (err) {
         console.log("ERROR al iniciar el servidor");
     } else {
+        //REINICIAR USER
         console.log(`Servidor arrancado en el puerto ${config.port}`);
     }
 });

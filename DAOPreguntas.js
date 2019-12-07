@@ -142,15 +142,15 @@ class DAOPreguntas {
         })
     }
 
-    readRespuestasIncorrectas(idPregunta,respuestaCorrecta, cantidad,callback){
+    readRespuestasIncorrectas(idPregunta,respuestaCorrecta, cantidad, callback){
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT respuesta FROM preguntaIncorrectas WHERE idPRegunta = ? AND respuesta != ? ORDER BY RAND() LIMIT ? ;";
-                let parametros = [idPregunta,respuestaCorrecta,cantidad]
-                conexion.query(sql, parametros, function(err, resultado) {
+                let sql = "SELECT respuesta FROM preguntaIncorrectas WHERE idPRegunta =" +idPregunta+ " AND respuesta != '"+respuestaCorrecta+"' ORDER BY RAND() LIMIT "+cantidad+" ;";
+
+                conexion.query(sql, function(err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     } else if (resultado) {
