@@ -25,6 +25,13 @@ header a {
     padding-bottom: 2%;
     color: brown;
 }
+
+
+header h1 a{
+    color: black;
+}
+
+
 body {
     background: #ffff99;
 }

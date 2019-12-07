@@ -26,6 +26,11 @@ header a {
     color: brown;
 }
 
+
+header h1 a{
+    color: black;
+}
+
 .respuestas {
     display: flex;
     width: 70%;

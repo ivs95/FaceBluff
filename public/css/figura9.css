@@ -26,6 +26,11 @@ header a {
     color: brown;
 }
 
+
+header h1 a{
+    color: black;
+}
+
 .titulo {
     display: flex;
     justify-content: center;
