@@ -23,8 +23,10 @@ const pool = mysql.createPool(config.mysqlConfig);
 const daoU = new DAOUsuarios(pool);
 const daoA = new DAOAmigo(pool);
 const daoP = new DAOPreguntas(pool);
+
 routerQuestions.use(express.static(ficherosEstaticos));
 
+routerQuestions.use(bodyParser.urlencoded({ extended: false }));
 
 
 function accessControl(request, response, next) {
@@ -260,8 +262,11 @@ routerQuestions.get("/create",accessControl,function(request, response){
 });
 routerQuestions.post("/create",accessControl, function (request, response) {
     let enunciado = request.body.enunciado;
+    console.log(request.body.enunciado);
+    console.log(request.body.respuestas);
     let respuestas = request.body.respuestas.split("\n");
-    ut.createPregunta(enunciado, respuestas.length());
+    console.log(typeof(respuestas));
+    let pregunta = ut.createPregunta(enunciado, respuestas.length);
     daoP.createPregunta(pregunta, function cb_readRespuestasIncorrectas(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
