@@ -11,7 +11,7 @@ const mysql = require("mysql");
 
 const bodyParser = require("body-parser");
 const fs = require("fs");
-const expressValidator = require("express-validator");
+//const expressValidator = require("express-validator");
 const routerUsers = express.Router();
 
 const ficherosEstaticos = path.join(__dirname, "public");
@@ -25,7 +25,7 @@ const daoU = new DAOUsuarios(pool);
 const daoA = new DAOAmigo(pool);
 const daoP = new DAOPreguntas(pool);
 routerUsers.use(express.static(ficherosEstaticos));
-routerUsers.use(expressValidator);
+//routerUsers.use(expressValidator());
 
 
 function accessControl(request, response, next) {
@@ -94,37 +94,36 @@ routerUsers.post("/login", function (request, response) {
 routerUsers.get("/my_profile", accessControl, function (request, response) {
 
 
-    /* daoU.readById(request.session.currentUser, function cb_readById(err, result) {
-         if (err) {
-             response.render("error500", { mensaje: err.message });
-         }
-         else {
-             let usuario = result;
-             console.log(result);
-             //usuario.edad = ut.calculateAge(usuario.fecha);
-            
- 
-         }
-     })*/
+    daoU.readById(request.session.currentUser.idUsuario, function cb_readById(err, result) {
+        if (err) {
+            response.render("error500", { mensaje: err.message });
+        }
+        else {
+            let usuario = result;
+            request.session.currentUser.edad = ut.calculateAge(usuario.fecha);
+            response.render("figura3", { usuario: request.session.currentUser });
 
-    response.render("figura3", { usuario: request.session.currentUser });
+        }
+    })
+
+
 });
 
 
 routerUsers.get("/profile/:idUsuario", accessControl, function (request, response) {
-    /*daoU.readById(request.params.idUsuario, function cb_readById(err, result) {
+    daoU.readById(request.params.idUsuario, function cb_readById(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
         else {
             let usuario = result;
             console.log(result);
-            //usuario.edad = ut.calculateAge(usuario.fecha);
-            response.render("figura3b", { usuario : result[0] });
-
+            usuario.edad = ut.calculateAge(usuario.fecha);
+           
+            response.render("figura3b", { usuario: usuario });
         }
-    })*/
-    ;
+    })
+        ;
 
     response.render("figura3b", { usuario: request.session.currentUser });
 });
@@ -160,6 +159,7 @@ routerUsers.get("/new_user", function (request, response) {
 
 routerUsers.post("/new_user", function (request, response) {
     var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha, request.body.foto);
+    console.log(usuario.fecha);
     daoU.createUser(usuario, function cb_crearUsuario(err) {
         if (err) {
             response.render("error500", { mensaje: err.message });

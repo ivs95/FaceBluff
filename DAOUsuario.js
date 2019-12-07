@@ -126,7 +126,7 @@ class DAOUsuario {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
                     else if (resultado) {
-                        callback(null, resultado);
+                        callback(null, resultado[0]);
                     }
                     else {
                         callback(new Error("No existe el usuario"));
