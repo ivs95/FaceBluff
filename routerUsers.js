@@ -61,6 +61,7 @@ routerUsers.get("/login", function (request, response) {
     delete request.session.errorMsg;
     response.render("figura1", { errorMsg: msg });
 });
+
 routerUsers.use(bodyParser.urlencoded({ extended: false }));
 
 
