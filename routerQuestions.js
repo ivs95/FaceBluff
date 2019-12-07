@@ -101,7 +101,7 @@ routerQuestions.get("/selected/:idPregunta",accessControl, function (request, re
                 }
             })
 
-            daoP.readRespuestasIncorrectas(request.params.idPregunta,result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
+          /*  daoP.readRespuestasIncorrectas(request.params.idPregunta,result.numRespestaInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 }
@@ -115,6 +115,7 @@ routerQuestions.get("/selected/:idPregunta",accessControl, function (request, re
                     request.render("figura8.ejs", pregunta, respuestas);
                 }
             })
+            */
 
         }
     });
@@ -129,7 +130,7 @@ routerQuestions.post("/selected/:idPregunta",accessControl, function (request, r
             response.render("error500", { mensaje: err.message });
         }
     });
-    //VERY MEGA DUDA RADIOBUTTONS EN EL POST
+    
 });
 
 routerQuestions.get("/answer/:idPregunta",accessControl, function (request, response) {
@@ -263,23 +264,29 @@ routerQuestions.get("/create",accessControl,function(request, response){
 routerQuestions.post("/create",accessControl, function (request, response) {
     let enunciado = request.body.enunciado;
     console.log(request.body.enunciado);
-    console.log(request.body.respuestas);
+    
     let respuestas = request.body.respuestas.split("\n");
-    console.log(typeof(respuestas));
+   
     let pregunta = ut.createPregunta(enunciado, respuestas.length);
+    console.log(pregunta);
     daoP.createPregunta(pregunta, function cb_readRespuestasIncorrectas(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
         else {
+            console.log(result);
             respuestas.forEach(element => {
                 daoP.añadirRespuestaPregunta(result, element, function cb_inserRespuestas(err) {
                     if (err) {
                         response.render("error500", { mensaje: err.message });
                     }
+                    
                 })
             });
 
+            
+            response.redirect("/question/show");
+        
         }
     });
 });

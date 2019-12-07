@@ -22,7 +22,7 @@ class DAOPreguntas {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     } else {
-
+                        
                         callback(null, resultado.insertId);
                     }
                     conexion.release();
