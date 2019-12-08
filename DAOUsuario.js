@@ -23,7 +23,7 @@ class DAOUsuario {
                         callback(err);
                     }
                     else {
-                        callback(null);
+                        callback(null, resultado.insertId);
                     }
                     conexion.release();
                 })
@@ -37,10 +37,8 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                console.log(usuario);
                 let sql = "UPDATE usuarios SET email='" + usuario.email + "',nombre='" + usuario.nombre + "',contraseña='" + usuario.password +
                     "',genero ='" + usuario.sexo + "',fecha='" + usuario.fecha + "' WHERE idUsuario ="+ id+";";
-                    console.log(sql);
                 
                 conexion.query(sql, function (err, resultado) {
                     if (err) {

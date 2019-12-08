@@ -12,7 +12,6 @@ class utils {
         return usuario;
     }
     getRespuesta (seleccion,seleccionText) {
-        console.log(seleccion);
         let respuestaElegida = seleccion;
         if (respuestaElegida == "otro"){
             respuestaElegida = seleccionText;
@@ -29,7 +28,7 @@ class utils {
         return pregunta;
     }
 
-    
+  
     calculateAge(birthday) {
         var isoDate = new Date(birthday).toISOString();        
         birthday = isoDate.slice(0,10);

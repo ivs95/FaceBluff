@@ -19,6 +19,8 @@
             <a href="/users/friends">Amigos</a>
             <a href="/question/show">Preguntas</a>
             <a href="/users/login">Desconectar</a>
+            <a href=""> <%= usuario.puntuacion %> puntos</a>
+
             
         </div>
     </header>
@@ -30,7 +32,7 @@
 
             <div class="main">
                 <div class="fotoPerfil">
-                    <img class="fotoPerfil" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
+                    <img class="fotoPerfil" src=<%="/users/imagen/"+usuario.idUsuario%>>
                 </div>
                 <div class="DatosPerfil">
                     <p>Nombre: <%=usuario.nombre%></p>

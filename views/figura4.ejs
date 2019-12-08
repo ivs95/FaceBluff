@@ -19,7 +19,7 @@
             <a href="/users/friends">Amigos</a>
             <a href="/question/show">Preguntas</a>
             <a href="/users/login">Desconectar</a>
-            <a href=""> <%= currentUser.puntuacion %> puntos</a>
+            <a href=""> <%= puntuacion %> puntos</a>
         </div>
     </header>
     <main>
@@ -27,7 +27,7 @@
             <h2>Solicitudes de amistad</h2>
             <% listaSolicitudes.forEach(function(element) { %>
             <div>
-                <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
+                <img class="fotoAmigo uno" src=<%="/users/imagen/"+element.idUsuario%>>
                 <a href=<%="/users/profile/" +element.idUsuario %>><%= element.nombre %></a>
                 <a href=<%="/users/friends/add_friend/" +element.idUsuario %> class="aceptaAmigo">Aceptar</a>
                 <a href=<%="/users/friends/refuse_friend/" +element.idUsuario %> class="rechazaAmigo">Rechazar</a>
@@ -49,7 +49,7 @@
 
             <% listaAmigos.forEach(function(element) { %>
             <div>
-                <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
+                <img class="fotoAmigo uno" src=<%="/users/imagen/"+element.idUsuario%>>
                 <a href=<%="/users/profile/" +element.idUsuario %>><%= element.nombre %></a>
             </div>
             <% }); %>

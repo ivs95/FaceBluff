@@ -2,14 +2,15 @@
 
 const DAOUsuarios = require("./DAOUsuario");
 const DAOPreguntas = require("./DAOPreguntas");
-const DAOAmigo = require("./DAOAmigo")
+const DAOAmigo = require("./DAOAmigo");
+const DAOIMagenes = require("./DAOImagenes");
 const config = require("./config");
 const utils = require("./utils");
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql");
-
 const bodyParser = require("body-parser");
+const multer = require("multer");
 const fs = require("fs");
 //const expressValidator = require("express-validator");
 const routerUsers = express.Router();
@@ -17,13 +18,14 @@ const routerUsers = express.Router();
 const ficherosEstaticos = path.join(__dirname, "public");
 
 
-
+const multerFactory = multer({ dest: path.join(__dirname, "public/img") });
 const ut = new utils();
 const pool = mysql.createPool(config.mysqlConfig);
 
 const daoU = new DAOUsuarios(pool);
 const daoA = new DAOAmigo(pool);
 const daoP = new DAOPreguntas(pool);
+const daoI = new DAOIMagenes(pool);
 routerUsers.use(express.static(ficherosEstaticos));
 //routerUsers.use(expressValidator());
 
@@ -80,7 +82,6 @@ routerUsers.post("/login", function (request, response) {
         }
         else {
             request.session.currentUser = result[0];
-            request.app.locals.currentUser = request.session.currentUser;
             response.redirect("/users/my_profile");
         }
     });
@@ -150,30 +151,55 @@ routerUsers.get("/new_user", function (request, response) {
     response.render("figura2")
 });
 
+routerUsers.get("/imagenes/:idUsuario", function (request, response) {
 
-routerUsers.post("/new_user", function (request, response) {
+});
+
+routerUsers.get("/imagen/:idUsuario", function (request, response) {
+    daoI.readImagenPerfil(request.params.idUsuario, function cb_readImagenPerfil(err, resultado) {
+        if (err) {
+            response.render("error500", { mensaje: err.message })
+        }
+        else if (resultado == null) {
+            response.sendFile(path.join(__dirname,"public","img","imagenPorDefecto.jpg"));
+        }
+        else {
+            response.sendFile(path.join(__dirname, "public","img", resultado.imagen));
+        }
+    });
+});
+
+routerUsers.post("/new_user", multerFactory.single("foto"), function (request, response) {
+
     var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha, request.body.foto);
-    console.log(usuario.fecha);
-    daoU.createUser(usuario, function cb_crearUsuario(err) {
+    daoU.createUser(usuario, function cb_crearUsuario(err, resultado) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
         else {
-            response.redirect("/users/login")
+            if (request.file) {
+                daoI.insertImagenPerfil(request.file.filename, resultado, function cb_insertImagen(err) {
+                    if (err) {
+                        response.render("error500", { mensaje: err.message });
+                    }
+                    else {
+                        response.redirect("/users/login");
+                    }
+                });
+            }
         }
-
     })
 });
 
 
 routerUsers.post("/search", function (request, response) {
     let caracteres = request.body.busqueda;
-    daoU.usersWithCharInName(request.session.currentUser.idUsuario,caracteres, function cb_usersFindChar(err, result) {
+    daoU.usersWithCharInName(request.session.currentUser.idUsuario, caracteres, function cb_usersFindChar(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
         else {
-            response.render("figura5", { usuarios: result });
+            response.render("figura5", { puntuacion:request.session.currentUser.puntuacion, usuarios: result });
         }
     });
 });
@@ -204,26 +230,23 @@ routerUsers.get("/friends", function (request, response) {
                 }
                 else {
                     let listaIds = [];
-                    result.forEach(element =>{
-                        listaIds.push(element.idAmigo);
-                    })
-                    daoU.readListaUsuarios(listaIds, function cb_readListaUsuarios(err,resultado){
-                        if (err){
-                            response.render("error500", { mensaje: err.message });
-                        }
-                        else {
-                            listaAmigos = resultado;
-                            response.render("figura4", { listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje : mensaje });
-                        }
-                    });/*
                     result.forEach(element => {
-                        daoU.readById(element.idAmigo, function cb_readUsuario(err, resultado) {
-                            if (!err) {
-                                console.log("ha llegado" + listaAmigos);
+                        listaIds.push(element.idAmigo);
+                    });
+                    if (listaIds.length > 0) {
+                        daoU.readListaUsuarios(listaIds, function cb_readListaUsuarios(err, resultado) {
+                            if (err) {
+                                response.render("error500", { mensaje: err.message });
+                            }
+                            else {
+                                listaAmigos = resultado;
+                                response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
                             }
                         });
-                    });
-                    console.log("ha hecho render");*/
+                    }
+                    else {
+                        response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
+                    }
 
                 }
             });
@@ -249,7 +272,7 @@ routerUsers.get("/friends/request_friend/:idUsuario", function (request, respons
                             if (err) {
                                 response.render("error500", { mensaje: err.message });
                             }
-                            else{
+                            else {
                                 request.session.mensajePeticion = "Petición enviada con éxito";
                                 response.redirect("/users/friends");
                             }
@@ -285,12 +308,12 @@ routerUsers.get("/friends/add_friend/:idUsuario", function (request, response) {
 
 routerUsers.get("/friends/refuse_friend/:idUsuario", function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
-    daoA.deletePeticion(request.params.idUsuario, request.session.currentUser.email, function cb_deletePeticion(err) {
+    daoA.deletePeticion(request.params.idUsuario, request.session.currentUser.idUsuario, function cb_deletePeticion(err) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
         else {
-            redirect("/users/friends")
+            response.redirect("/users/friends")
         }
     })
 });

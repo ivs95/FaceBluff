@@ -65,6 +65,7 @@ create table preguntasAmigoRespondidas (
 create table imagenes (
   idUsuario int not null,
   imagen varchar(255),
+  perfil bit,
   FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario)
 
 

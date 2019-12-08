@@ -65,7 +65,7 @@ routerQuestions.get("/show", accessControl, function (request, response) {
         else {
             let listaPreguntas = result;
             console.log(listaPreguntas);
-            response.render("figura6", { listaPreguntas: listaPreguntas });
+            response.render("figura6", {puntuacion: request.session.currentUser.puntuacion, listaPreguntas: listaPreguntas });
 
         }
     });
@@ -135,13 +135,13 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                                 console.log("estado de la respuesta del usaurio por otro : " + result);
                                                 listaAmigosQueHasAdivinado = result;
                                                                                             
-                                                response.render("figura7", { contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado: listaAmigosQueHasAdivinado})
+                                                response.render("figura7", {puntuacion: request.session.currentUser.puntuacion, contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado: listaAmigosQueHasAdivinado})
                                                 // listaAmigos.push(result);
                                             }
                                         })
                                     }
 
-                                    else response.render("figura7", { contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado : listaAmigosQueHasAdivinado})
+                                    else response.render("figura7", {puntuacion: request.session.currentUser.puntuacion, contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado : listaAmigosQueHasAdivinado})
 
                                 }
                             });
@@ -189,7 +189,7 @@ routerQuestions.get("/answer/:idPregunta", accessControl, function (request, res
                         respuestas.push(element)
                     });
                     console.log(respuestas);
-                    response.render("figura8.ejs", { pregunta: pregunta, respuestas: respuestas });
+                    response.render("figura8.ejs", {puntuacion: request.session.currentUser.puntuacion, pregunta: pregunta, respuestas: respuestas });
                 }
 
             })
