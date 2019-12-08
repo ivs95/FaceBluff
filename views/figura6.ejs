@@ -20,8 +20,6 @@
             <a href="/question/show">Preguntas</a>
             <a href="/users/login">Desconectar</a>
             <a href=""> <%= currentUser.puntuacion %> puntos</a>
-
-           
         </div>
     </header>
     <main>
@@ -31,10 +29,10 @@
             </h2>
 
             <div class="main">
-
+                
                 <% listaPreguntas.forEach(function(element) { %>
                 <section class="pregunta">
-                    <a href ="<%="/question/selected/" + element.idPregunta %>"> <%= element.enunciado %></a>
+                    <a href =<%="/question/selected/" + element.idPregunta %>> <%= element.enunciado %></a>
                 </section>
                 <% }); %>
                 

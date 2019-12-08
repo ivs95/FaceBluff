@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <link href="figura7.css" rel="stylesheet">
+    <link href="/css/figura7.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lobster+Two&display=swap" rel="stylesheet">
 </head>
 
@@ -12,55 +12,53 @@
 
     <header>
         <div class="titulo">
-            <h1><a href = /users/my_profile>FaceBluff</a></h1>
-        </div>
-        <div class="enlaces">
-            <a href="/users/my_profile">Perfil</a>
-            <a href="/users/friends">Amigos</a>
-            <a href="/question/show">Preguntas</a>
-            <a href="/users/login">Desconectar</a>
-            <a href=""> <%= currentUser.puntuacion %> puntos</a>
+            <h1><a href= /users/my_profile>FaceBluff </a> </h1> </div> <div class="enlaces">
+                    <a href="/users/my_profile">Perfil</a>
+                    <a href="/users/friends">Amigos</a>
+                    <a href="/question/show">Preguntas</a>
+                    <a href="/users/login">Desconectar</a>
+                    <a href=""> <%= currentUser.puntuacion %> puntos</a>
+
+                 
         </div>
     </header>
     <main>
         <div class="contenido">
             <h2 class="pagina">
-                ¿Nitendo Switch ,PS4, o Xbox One?
+              
             </h2>
 
-                <div class = "main">
-                    <p> No has contestado a la pregunta.</p>
-                    <a href="">Contesta pregunta</a>
-                    <p>Los siguientes amigos han contestado a esta pregunta</p>
-                    <section class = "respuestas">
-                        <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                        <span>Bruja Piruja</span>
-                        <a href="/question/answerToOther/concatenarIdPregunta+idAmigo" class="aceptaAmigo">Adivinar</a>
-                    </section> 
-                    <section class ="respuestas">
-                        <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                        <span>Super Bruja</span>
-                        <a href="" class="aceptaAmigo">Adivinar</a>
-                    </section> 
-                    <section class ="respuestas">
-                        <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                        <span>Pepe</span>
-                        <span class = "acierto ">Has acertado!</span>
-                    </section> 
-                    <section class = "respuestas">
-                        <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                        <span>Juan</span>
-                        <span class = "fallo">Has fallado!</span>
-                    </section>                
-                </div>
-                <br>
-                ¡Añade tus preguntas!
-                
-                <a href="">Crear nueva pregunta</a>
-            </div>
-             
+            <div class="main">
 
+                <% if(!contestado){  %>
+                        <p> No has contestado a la pregunta.</p>
+                        <a href=<%="/question/answer/" + pregunta.idPregunta %>>Contesta pregunta</a>
+                <% } else{ %>
+                         <p> Ya has contestado a esta pregunta</p>
+                <% } %>
+                <p>Los siguientes amigos han contestado a esta pregunta</p>
+                <% listaAmigos.forEach(function(element) { %>
+                    <section class="respuestas">
+                        <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
+                        <span><%= element.idAmigo %></span>
+                        <% if(element.acertada==true) {%>
+                            <span class="acierto ">Has acertado!</span>
+                        <%} else if(element.acertada==false) {%>
+                            <span class="fallo">Has fallado!</span>
+                       <%} else{%>
+                            <a href="/question/answerToOther/concatenarIdPregunta+idAmigo" class="aceptaAmigo">Adivinar</a>
+                            <%}%>
+                        </section>
+                    <% }); %>
             </div>
+            <br>
+            ¡Añade tus preguntas!
+
+            <a href="/question/create">Crear nueva pregunta</a>
+        </div>
+
+
+        </div>
 
     </main>
 </body>

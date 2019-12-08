@@ -86,7 +86,7 @@ class DAOAmigo {
                 let sql = "SELECT idAmigo FROM amigos WHERE idUsuario = ? ";
                 conexion.query(sql, [idUsuario], function (err, resultado) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     }
                     else {
                         callback(null,resultado);
