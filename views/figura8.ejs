@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <link href="figura8.css" rel="stylesheet">
+    <link href="/css/figura8.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lobster+Two&display=swap" rel="stylesheet">
 </head>
 
@@ -30,16 +30,18 @@
 
             <div class="main">
 
-                <form action=<%="/question/answer/" +pregunta.idPregunta %> method="post">
+                <form method="POST" action= <%="/question/answer/" +pregunta.idPregunta %>>
+                    <% respuestas.forEach(function(element) { %>
                     <section class="pregunta">
-
-                        <% respuestas.forEach(element => { %>
-                        <input type="radio"  name="seleccion" value=<%= element %>> <span> <%= element %></span>
-                        <% }); %>
+                      
+                        <input type="radio"  name="seleccion" value="<%= element.respuesta %>"> <span> <%= element.respuesta %></span>
+                       
                     </section>
+                     <% }); %>
                     <section class="pregunta otra">
-                        <input type="radio" name="seleccion" value ="otro" > <span> Otra : </span>
-                        <input type="text" name="seleccionText" class="otro" value="">
+                        <br/>
+                        <input type="radio" name="seleccion" value ="otro" > <span> Otra: </span>
+                        <input type="text" name="seleccionText" class="otro" value=" ">
                     </section>
                     <input type="submit" value="Responder">
                 </form>

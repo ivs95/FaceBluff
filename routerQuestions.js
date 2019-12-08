@@ -117,7 +117,7 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                         listaAmigos = result;
                                     console.log(listaAmigos);
                                     console.log(pregunta);
-                                    response.render("figura7", { contestado: contestado, pregunta: pregunta, listaAmigos: listaAmigos, })
+                                    response.render("figura7", { contestado: contestado , pregunta : pregunta[0], listaAmigos: listaAmigos })
                                     // listaAmigos.push(result);
                                 }
 
@@ -154,20 +154,21 @@ routerQuestions.get("/answer/:idPregunta", accessControl, function (request, res
             response.render("error500", { mensaje: err.message });
         }
         else {
-            var pregunta = result;
-            daoP.readRespuestasIncorrectas( request.params.idPregunta, pregunta.numRespuestasInicial - 1, function cb_readRespuestasIncorrectas(err, result) {
+            var pregunta = result[0];
+            console.log(pregunta);
+            daoP.readRespuestasIncorrectas( request.params.idPregunta, pregunta.numRespuestasInicial, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
 
                     let respuestas = [];
-                    result.forEach(element => {
-                        respuestas.push(element.enunciado);
+                    console.log(result);
+                    result.forEach(function(element) { 
+                        respuestas.push(element)
                     });
-                    respuestas.push(pregunta.respuestaCorrecta);
-                    respuestas.sort(() => Math.random() - 0.5);
-                    request.render("figura8.ejs", pregunta, respuestas);
+                    console.log(respuestas); 
+                    response.render("figura8.ejs", {pregunta : pregunta, respuestas:respuestas});
                 }
 
             })
@@ -179,11 +180,15 @@ routerQuestions.get("/answer/:idPregunta", accessControl, function (request, res
 routerQuestions.post("/answer/:idPregunta", accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
+    console.log(respuestaElegida);
     //If value == otro coger el valor del textArea
-    daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.usuario.idUsuario, function cb_responderPregunta(err) {
+    daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.currentUser.idUsuario, function cb_responderPregunta(err) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
+        else{
+            response.redirect("/question/selected/"+ request.params.idPregunta);
+        } 
     });
 });
 

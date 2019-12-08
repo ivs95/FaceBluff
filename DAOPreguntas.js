@@ -85,7 +85,7 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "INSERT INTO preguntasRespondidas (idPRegunta,idUsuario,respuesta) VALUES (?,?,?);";
+                let sql = "INSERT INTO preguntasRespondidas (idPregunta,idUsuario,respuesta) VALUES (?,?,?);";
                 let parametros = [idPregunta, idUsuario, respuestaCorrecta];
                 conexion.query(sql, parametros, function(err) {
                     if (err) {
@@ -145,17 +145,17 @@ class DAOPreguntas {
         })
     }
 
-    readRespuestasIncorrectas(idPregunta,respuestaCorrecta, cantidad, callback){
+    readRespuestasIncorrectas(idPregunta, cantidad, callback){
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT respuesta FROM respuestas WHERE idPRegunta =" +idPregunta+ " ORDER BY RAND() LIMIT "+cantidad+" ;";
+                let sql = "SELECT respuesta FROM respuestas WHERE idPRegunta ="+idPregunta+" ORDER BY RAND() LIMIT "+cantidad+" ;";
 
                 conexion.query(sql, function(err, resultado) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     } else if (resultado) {
                         callback(null, resultado);
                     } else {

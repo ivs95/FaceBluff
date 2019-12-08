@@ -12,6 +12,7 @@ class utils {
         return usuario;
     }
     getRespuesta (seleccion,seleccionText) {
+        console.log(seleccion);
         let respuestaElegida = seleccion;
         if (respuestaElegida == "otro"){
             respuestaElegida = seleccionText;
