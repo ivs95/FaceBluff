@@ -37,19 +37,25 @@
                          <p> Ya has contestado a esta pregunta</p>
                 <% } %>
                 <p>Los siguientes amigos han contestado a esta pregunta</p>
+
                 <% listaAmigos.forEach(function(element) { %>
                     <section class="respuestas">
+                    <span><%= element %></span>
+                    <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
+                    <a href="/question/answerToOther/concatenarIdPregunta+idAmigo" class="aceptaAmigo">Adivinar</a>
+                   
+                <% }); %>
+                <% listaAmigosQueHasAdivinado.forEach(function(element) { %>
+                    <section class="respuestas">
                         <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                        <span><%= element.idAmigo %></span>
+                        <span><%= element %></span>
                         <% if(element.acertada==true) {%>
                             <span class="acierto ">Has acertado!</span>
                         <%} else if(element.acertada==false) {%>
                             <span class="fallo">Has fallado!</span>
-                       <%} else{%>
-                            <a href="/question/answerToOther/concatenarIdPregunta+idAmigo" class="aceptaAmigo">Adivinar</a>
                             <%}%>
-                        </section>
-                    <% }); %>
+                    </section>
+            <% }); %>
             </div>
             <br>
             ¡Añade tus preguntas!

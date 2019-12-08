@@ -62,7 +62,7 @@ class DAOPreguntas {
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
                
-                console.log(idPregunta);
+                
                 let sql = "SELECT idPregunta,enunciado,numRespuestasInicial FROM preguntas WHERE idPregunta = ?";
                 conexion.query(sql, idPregunta, function(err, resultado) {
                     if (err) {
@@ -145,6 +145,33 @@ class DAOPreguntas {
         })
     }
 
+    readAllRespuestasPorID(idPregunta, listaAmigos, callback) {
+        this.pool.getConnection(function(err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            } else {
+                let sql = "SELECT idUsuario,respuesta FROM preguntasRespondidas WHERE idPregunta = "+ idPregunta+" AND idUsuario IN ("+listaAmigos+")";
+                //let parametros = [idPregunta,listaAmigos];
+                //console.log(parametros);
+                conexion.query(sql, function(err, result) {
+                    
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    } else if (result) {
+                        
+                        console.log(result);
+                        callback(null, result);
+                    } else {
+                        console.log("Error")
+                        callback(null, false);
+                    }
+
+                    conexion.release();
+                })
+            }
+        })
+    }
     readRespuestasIncorrectas(idPregunta, cantidad, callback){
         this.pool.getConnection(function(err, conexion) {
             if (err) {
@@ -176,24 +203,24 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {    
-                let sql;
-                if(listaAmigos.length != 0){
-                     sql = "SELECT * FROM preguntasAmigoRespondidas WHERE idUsuario =" +idUsuario+ " AND idAmigo IN "+listaAmigos+" AND idPregunta =" +idPregunta+";";
-                conexion.query(sql, function(err, resultado) {
+                
+                     let sql = "SELECT acertada FROM preguntasAmigoRespondidas WHERE idUsuario =? AND idAmigo IN (?) AND idPregunta =?";
+                     let params = [idUsuario,listaAmigos,idPregunta];
+                    console.log(params);
+                    conexion.query(sql,params, function(err, resultado) {
+                        
                     if (err) {
                             callback(err);
                     } else if (resultado) {
+                        console.log(resultado);
                         callback(null, resultado);
-                    } else {
-                        callback(new Error("No existe el usuario"));
+                    
                     }
                     conexion.release();
                 })
-            
             }
-            callback(null,false);
-            conexion.release();
-        }
+    
+        
 
         })
     }
