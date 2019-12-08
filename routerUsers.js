@@ -85,7 +85,6 @@ routerUsers.post("/login", function (request, response) {
         }
     });
 
-    //var password = request.body.password;
 });
 
 
@@ -118,24 +117,18 @@ routerUsers.get("/profile/:idUsuario", accessControl, function (request, respons
         }
         else {
             let usuario = result;
-            console.log(result);
             usuario.edad = ut.calculateAge(usuario.fecha);
-           
             response.render("figura3b", { usuario: usuario });
         }
-    })
-        ;
+    });
 
-    response.render("figura3b", { usuario: request.session.currentUser });
 });
 
 routerUsers.get("/update_user", accessControl, function (request, response) {
-    //let usuario = request.cookies.usuario;
     response.render("figura11", { usuario: request.session.currentUser })
 });
 
 routerUsers.post("/update_user", accessControl, function (request, response) {
-    //let usuario = request.cookies.usuario;
     var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha, request.body.foto);
 
     daoU.updateUser(usuario, request.session.currentUser.idUsuario, function cb_updateUser(err, result) {
@@ -190,35 +183,50 @@ routerUsers.get("/friends", function (request, response) {
     let usuario = request.session.currentUser;
     let listaPeticiones = [];
     let listaAmigos = [];
+    let mensaje = request.session.mensajePeticion;
+    delete request.session.mensajePeticion;
 
     daoA.readPeticionesByUser(usuario.idUsuario, function cb_readPeticionesByUser(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         }
         else {
-
             result.forEach(element => {
-                daoU.readById(element, function cb_readUsuario(err, result) {
+                daoU.readById(element.idOrigen, function cb_readUsuario(err, result) {
                     if (!err) {
                         listaPeticiones.push(result);
                     }
                 });
             });
-            daoA.readAmigosByUser(usuario.email, function cb_readAmigosByUser(err, result) {
+            daoA.readAmigosByUser(usuario.idUsuario, function cb_readAmigosByUser(err, result) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
+                    let listaIds = [];
+                    result.forEach(element =>{
+                        listaIds.push(element.idAmigo);
+                    })
+                    daoU.readListaUsuarios(listaIds, function cb_readListaUsuarios(err,resultado){
+                        if (err){
+                            response.render("error500", { mensaje: err.message });
+                        }
+                        else {
+                            listaAmigos = resultado;
+                            response.render("figura4", { listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje : mensaje });
+                        }
+                    });/*
                     result.forEach(element => {
-                        daoU.readByEmail(element, function cb_readUsuario(err, result) {
+                        daoU.readById(element.idAmigo, function cb_readUsuario(err, resultado) {
                             if (!err) {
-                                listaAmigos.push(result);
+                                console.log("ha llegado" + listaAmigos);
                             }
                         });
                     });
-                    response.render("figura4", { listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos });
+                    console.log("ha hecho render");*/
+
                 }
-            })
+            });
         }
     });
 
@@ -232,23 +240,25 @@ routerUsers.get("/friends/request_friend/:idUsuario", function (request, respons
         }
         else {
             if (result != true) {
-                daoA.readPeticionesByUser(idUsuario, function cb_readPeticionesByUser(err, result) {
+                daoA.existePeticion(request.session.currentUser.idUsuario, request.params.idUsuario, function cb_existePeticion(err, result) {
                     if (err) {
                         response.render("error500", { mensaje: err.message });
                     }
                     else if (result == null) {
-                        daoA.addPeticion(request.session.currentUser.idUsuario, request.params.idUsuario), function cb_deletePeticion(err) {
+                        daoA.addPeticion(request.session.currentUser.idUsuario, request.params.idUsuario, function cb_addPeticion(err) {
                             if (err) {
                                 response.render("error500", { mensaje: err.message });
                             }
-                        }
+                            else{
+                                request.session.mensajePeticion = "Petición enviada con éxito";
+                                response.redirect("/users/friends");
+                            }
+                        });
                     }
                 });
             }
         }
     });
-
-
 });
 
 routerUsers.get("/friends/add_friend/:idUsuario", function (request, response) {
@@ -264,7 +274,7 @@ routerUsers.get("/friends/add_friend/:idUsuario", function (request, response) {
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
-                    redirect("/users/friends")
+                    response.redirect("/users/friends")
                 }
             });
         }

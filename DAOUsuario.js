@@ -61,6 +61,31 @@ class DAOUsuario {
             }
         })
     }
+    readListaUsuarios(listaIds, callback){
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                console.log(listaIds);
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE idUsuario IN (?)" ;
+                conexion.query(sql,listaIds, function (err, resultado) {
+                    if (err) {
+                       callback(err);
+                    }
+                    else if (resultado) {
+                        console.log(resultado)
+                        callback(null, resultado);
+                    }
+                    else {
+                        callback(new Error("No existe el usuario"));
+                    }
+                    conexion.release();
+                })
+            }
+        })
+    }
 
     readByEmail(email, callback) {
         this.pool.getConnection(function (err, conexion) {
@@ -116,7 +141,6 @@ class DAOUsuario {
     readById(id, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
@@ -190,8 +214,10 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT * FROM usuarios WHERE nombre LIKE '%"+ caracteres+"%' AND idUsuario!=?;";
-                conexion.query(sql,idUsuario, function (err, resultado) {
+                let sql = "SELECT * FROM usuarios WHERE nombre LIKE ? AND idUsuario!=?;";
+                let like = "%" + caracteres + "%";
+                let parametros = [like, idUsuario];
+                conexion.query(sql,parametros, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     }

@@ -25,14 +25,14 @@
     <main>
         <div class="solicitudes bloque">
             <h2>Solicitudes de amistad</h2>
-            <% for (var solicitud in listaSolicitudes) { %>
+            <% listaSolicitudes.forEach(function(element) { %>
             <div>
                 <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <a href=<%="/users/profile/" +solicitud.idUsuario %>><%= solicitud.nombre %></a>
-                <a href=<%="/users/friends/add_friend/" +solicitud.idUsuario %> class="aceptaAmigo">Aceptar</a>
-                <a href=<%="/users/friends/refuse_friend/" +solicitud.idUsuario %> class="rechazaAmigo">Rechazar</a>
+                <a href=<%="/users/profile/" +element.idUsuario %>><%= element.nombre %></a>
+                <a href=<%="/users/friends/add_friend/" +element.idUsuario %> class="aceptaAmigo">Aceptar</a>
+                <a href=<%="/users/friends/refuse_friend/" +element.idUsuario %> class="rechazaAmigo">Rechazar</a>
             </div>
-            <% } %>
+            <% }); %>
         </div>
         <div class="busqueda bloque">
             <h2>Búsqueda de amigos</h2>
@@ -46,13 +46,18 @@
         </div>
         <div class="amigos bloque">
             <h2>Mis amigos</h2>
-            <% for (var amigo in listaAmigos) { %>
+
+            <% listaAmigos.forEach(function(element) { %>
             <div>
                 <img class="fotoAmigo uno" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                <a href=<%="/users/profile/" +amigo.idUsuario %>><%= amigo.nombre %></a>
+                <a href=<%="/users/profile/" +element.idUsuario %>><%= element.nombre %></a>
             </div>
-            <% } %>
+            <% }); %>
 
+        </div>
+
+        <div class="Mensaje">
+            <p><%=mensaje%></p>
         </div>
     </main>
 </body>

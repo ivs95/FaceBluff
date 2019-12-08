@@ -8,7 +8,7 @@ class DAOAmigo {
         this.pool = pool;
     }
 
-    addPeticion(idOrigen, idDestino, callback){
+    addPeticion(idOrigen, idDestino, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -30,7 +30,7 @@ class DAOAmigo {
         })
     }
 
-    addFriend(idUsuario, idAmigo, callback){
+    addFriend(idUsuario, idAmigo, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -53,7 +53,7 @@ class DAOAmigo {
     }
 
 
-    deletePeticion(idOrigen, idDestino, callback){
+    deletePeticion(idOrigen, idDestino, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -74,9 +74,9 @@ class DAOAmigo {
             }
         })
     }
-    
-    //Devuelve la lista de amigos del email del usuario registrado
-    readAmigosByUser(idUsuario, callback){
+
+    //Devuelve la lista de amigos del id del usuario registrado
+    readAmigosByUser(idUsuario, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 console.log(err);
@@ -89,23 +89,35 @@ class DAOAmigo {
                         callback(err);
                     }
                     else {
-                        callback(null,resultado);
-                    }
-                    conexion.release();
-                })
-            }
-        })
+                        let retorno = resultado;
+                        let sql = "SELECT idUsuario AS idAmigo FROM amigos WHERE idAmigo = ? ";
+                        conexion.query(sql, [idUsuario], function (err, resultado) {
+                            if (err) {
+                                callback(err);
+                            }
+                            else {
+                                resultado.forEach(element => {
+                                    retorno.push(element);
+                                });
+                                callback(null, retorno);
+                            }
+                            conexion.release();
 
+                        });
+                    }
+                });
+            }
+        });
     }
 
-    isAmigo(idUsuario,idAmigo,callback){
+    isAmigo(idUsuario, idAmigo, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
                 let sql = "SELECT * FROM amigos WHERE (idUsuario = ? AND idAmigo = ?) OR (idUsuario = ? AND idAmigo = ?);";
-                let params = [idUsuario,idAmigo,idAmigo,idUsuario];
+                let params = [idUsuario, idAmigo, idAmigo, idUsuario];
                 conexion.query(sql, params, function (err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
@@ -123,20 +135,42 @@ class DAOAmigo {
     }
 
     //Devuelve la lista de peticiones que tiene el email del usuario registrado
-    readPeticionesByUser(idUsuario, callback){
+    readPeticionesByUser(idUsuario, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT idOrigen FROM peticiones WHERE idDestino=?";
+                let sql = "SELECT idOrigen FROM peticiones WHERE idDestino = ?";
                 conexion.query(sql, idUsuario, function (err, resultado) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     }
                     else {
-                        callback(null,resultado);
+                        callback(null, resultado);
+                    }
+                    conexion.release();
+                })
+            }
+        })
+
+    }
+
+    //Devuelve la lista de peticiones que tiene el email del usuario registrado
+    existePeticion(idOrigen, idDestino, callback) {
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "SELECT * FROM peticiones WHERE idOrigen = ? AND idDestino = ?";
+                let params = [idOrigen, idDestino];
+                conexion.query(sql, params, function (err, resultado) {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null, resultado[0]);
                     }
                     conexion.release();
                 })
