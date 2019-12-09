@@ -153,13 +153,13 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT preguntasRespondidas.idUsuario,preguntasRespondidas.respuesta usuarios.nombre FROM preguntasRespondidas INNER JOIN  usuarios ON preguntasRespondidas.idUsuario = usuarios.idUsuario WHERE preguntasRespondidas.idPregunta = "+ idPregunta+" AND preguntasRespondidas.idUsuario IN ("+listaAmigos+")";
+                let sql = "SELECT preguntasRespondidas.idUsuario,preguntasRespondidas.respuesta,usuarios.nombre FROM preguntasRespondidas INNER JOIN  usuarios ON preguntasRespondidas.idUsuario = usuarios.idUsuario WHERE preguntasRespondidas.idPregunta = "+ idPregunta+" AND preguntasRespondidas.idUsuario IN ("+listaAmigos+")";
                 //let parametros = [idPregunta,listaAmigos];
                 //console.log(parametros);
                 conexion.query(sql, function(err, result) {
                     
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     } else if (result) {
                         
                         console.log(result);
@@ -226,15 +226,15 @@ class DAOPreguntas {
                 callback(new Error("Error de conexión a la base de datos"));
             } else {    
     
-                     let sql = "SELECT preguntasAmigoRespondidas.idAmigo,preguntasAmigoRespondidas.acertada,usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON usuarios.idUsuario=preguntasAmigoRespondidas.idAmigo WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN (?) AND preguntasAmigoRespondidas.idPregunta =?";
+                     let sql = "SELECT preguntasAmigoRespondidas.idAmigo,preguntasAmigoRespondidas.acertada,usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON preguntasAmigoRespondidas.idAmigo=usuarios.idUsuario WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN (?) AND preguntasAmigoRespondidas.idPregunta =?";
                      let params = [idUsuario,listaAmigos,idPregunta];
-                   
+                   console.log(params);
                     conexion.query(sql,params, function(err, resultado) {
                         
                     if (err) {
                             callback(err);
                     } else if (resultado) {
-                        console.log(resultado);
+                        
                         callback(null, resultado);
                     
                     }

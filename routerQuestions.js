@@ -123,7 +123,8 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                         console.log(element);
                                         listaAmigosQueHanRespondido.push(element);
                                     });
-
+                                    console.log("MOFAS")
+                                    console.log(listaAmigosQueHanRespondido);
                                     console.log("respuesta de los amigos del usuario a esa pregunta :  " + listaAmigosQueHanRespondido)
                                     if (listaAmigosQueHanRespondido.length != 0) {
 
@@ -244,7 +245,7 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
                 else {
                     // amigo al qu voy a intentar adivinar
                     var amigo = result;
-
+                    
                     daoP.readRespuestaCorrecta(request.params.idPregunta, request.params.idAmigo, function cb_readRespuestaCorrecta(err, result) {
                         if (err) {
                             console.log(err.message);
@@ -262,10 +263,10 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
                                     let respuestas = [];
                                     console.log(result);
                                     result.forEach(function (element) {
-                                        respuestas.push(element.respuesta)
+                                        respuestas.push(element.respuesta )
                                     });
                                     console.log(respuestas);
-
+                                    console.log(respuestaDelAmigo);
                                     respuestas.push(respuestaDelAmigo.respuesta);
                                     respuestas.sort(() => Math.random() - 0.5);
 
