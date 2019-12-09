@@ -226,9 +226,9 @@ class DAOPreguntas {
                 callback(new Error("Error de conexión a la base de datos"));
             } else {    
     
-                     let sql = "SELECT preguntasAmigoRespondidas.idUsuario,preguntasAmigoRespondidas.acertada,usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON usuarios.idUsuario=preguntasAmigoRespondidas.idUsuario WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN (?) AND preguntasAmigoRespondidas.idPregunta =?";
+                     let sql = "SELECT preguntasAmigoRespondidas.idAmigo,preguntasAmigoRespondidas.acertada,usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON usuarios.idUsuario=preguntasAmigoRespondidas.idAmigo WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN (?) AND preguntasAmigoRespondidas.idPregunta =?";
                      let params = [idUsuario,listaAmigos,idPregunta];
-                    console.log(params);
+                   
                     conexion.query(sql,params, function(err, resultado) {
                         
                     if (err) {

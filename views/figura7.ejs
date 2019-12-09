@@ -38,7 +38,7 @@
                 <% listaAmigosQueHasAdivinado.forEach(function(element) { %>
                     <section class="respuestas">
                         <img class="fotoSolicitud" src="">
-                        <span><%= element.idUsuario %></span>
+                        <span><%= element.nombre %></span>
                         <% if(element.acertada==true) {%>
                             <span class="acierto">Has acertado!</span>
                         <%} else if(element.acertada==false) {%>

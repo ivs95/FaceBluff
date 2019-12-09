@@ -124,7 +124,6 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                         listaAmigosQueHanRespondido.push(element.idUsuario);
                                     });
 
-
                                     console.log("respuesta de los amigos del usuario a esa pregunta :  " + listaAmigosQueHanRespondido)
                                     if (listaAmigosQueHanRespondido.length != 0) {
 
