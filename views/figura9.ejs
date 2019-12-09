@@ -29,11 +29,11 @@
             </h2>
 
             <div class="main">
-                <form method="post" action=<%="question/answerToOther/"+ pregunta.idPregunta + "/" + amigo.idUsuario %>> 
+                <form method="POST" action=<%="question/answerToOther/"+ pregunta.idPregunta + "/" + amigo.idUsuario %>> 
                     <h3>¿Que crees que opina <%= amigo.nombre %>?</h3>
                     <% respuestas.forEach(function(element) { %>
                     <section class="pregunta">
-                        <input type="radio" name="seleccion" value=<%= element %>> <span> <%=element %></span>
+                        <input type="radio" name="seleccion" value=<%= element %>> <span> <%= element %></span>
                     </section>
                     <% }); %>
                     <input type="submit" value="Responder">
