@@ -99,9 +99,7 @@ class DAOPreguntas {
         })
     }
 
-    readAllNamePhot(idUsaurios_list,callback){
-
-    }
+    
     read5Random(callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
@@ -227,8 +225,8 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {    
-                
-                     let sql = "SELECT * FROM preguntasAmigoRespondidas WHERE idUsuario =? AND idAmigo IN (?) AND idPregunta =?";
+    
+                     let sql = "SELECT preguntasAmigoRespondidas.idUsuario,preguntasAmigoRespondidas.acertada,usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON usuarios.idUsuario=preguntasAmigoRespondidas.idUsuario WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN (?) AND preguntasAmigoRespondidas.idPregunta =?";
                      let params = [idUsuario,listaAmigos,idPregunta];
                     console.log(params);
                     conexion.query(sql,params, function(err, resultado) {
