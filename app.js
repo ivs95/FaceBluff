@@ -2,7 +2,7 @@
 
 
 /*
-VALIDACION DE FORMULARIOS.
+VALIDACION DE FORMULARIOS. (queda test)
 CSS FIGURA 8 mostrar respuestas
 CAMBIAR COLOR BOTONES DE LOS NOMBRES
 PREGUNTAS: RESPONDER POR OTRO AMIGO Y LO DE LA PUNTUACION
@@ -35,7 +35,6 @@ const cookieParser = require("cookie-parser");
 const fs = require("fs");
 const express_session = require("express-session");
 const express_mysqlsession = require("express-mysql-session");
-
 // Crear un servidor Express.js
 const app = express();
 

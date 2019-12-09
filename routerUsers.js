@@ -12,7 +12,7 @@ const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const fs = require("fs");
-//const expressValidator = require("express-validator");
+const { check, validationResult } = require('express-validator');
 const routerUsers = express.Router();
 
 const ficherosEstaticos = path.join(__dirname, "public");
@@ -67,7 +67,11 @@ routerUsers.get("/login", function (request, response) {
 routerUsers.use(bodyParser.urlencoded({ extended: false }));
 
 
-routerUsers.post("/login", function (request, response) {
+routerUsers.post("/login", [check('email').isEmail(), check('password').isLength({min : 1})], function (request, response) {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()){
+        response.render("error500", { mensaje: errors.array().toString()});
+    }
     let email = request.body.email;
     let password = request.body.password;
 
@@ -93,8 +97,6 @@ routerUsers.post("/login", function (request, response) {
 //Usar middleware de control de acceso con app.use(middlewareacceso)
 
 routerUsers.get("/my_profile", accessControl, function (request, response) {
-
-
     daoU.readById(request.session.currentUser.idUsuario, function cb_readById(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
@@ -102,7 +104,7 @@ routerUsers.get("/my_profile", accessControl, function (request, response) {
         else {
             let usuario = result;
             request.session.currentUser.edad = ut.calculateAge(usuario.fecha);
-            response.render("figura3", { usuario: request.session.currentUser });
+            response.render("figura3", {  puntuacion:request.session.currentUser.puntuacion, usuario: request.session.currentUser });
 
         }
     })
@@ -119,7 +121,7 @@ routerUsers.get("/profile/:idUsuario", accessControl, function (request, respons
         else {
             let usuario = result;
             usuario.edad = ut.calculateAge(usuario.fecha);
-            response.render("figura3b", { usuario: usuario });
+            response.render("figura3b", {  puntuacion:request.session.currentUser.puntuacion, usuario: usuario });
         }
     });
 
@@ -129,9 +131,11 @@ routerUsers.get("/update_user", accessControl, function (request, response) {
     response.render("figura11", { usuario: request.session.currentUser })
 });
 
-routerUsers.post("/update_user", accessControl, function (request, response) {
-    var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha, request.body.foto);
-
+routerUsers.post("/update_user",[check('email').isEmail(), check('password').isLength({min:1}), check('nombre').isLength({min:1}), check('sexo').notEmpty()], accessControl, function (request, response) {
+    if (!errors.isEmpty()){
+        response.render("error500", { mensaje: errors.array().toString()});
+    }
+    var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
     daoU.updateUser(usuario, request.session.currentUser.idUsuario, function cb_updateUser(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
@@ -169,9 +173,11 @@ routerUsers.get("/imagen/:idUsuario", function (request, response) {
     });
 });
 
-routerUsers.post("/new_user", multerFactory.single("foto"), function (request, response) {
-
-    var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha, request.body.foto);
+routerUsers.post("/new_user",[check('email').isEmail(), check('password').isLength({min:1}), check('nombre').isLength({min:1}), check('sexo').notEmpty()], multerFactory.single("foto"), function (request, response) {
+    if (!errors.isEmpty()){
+        response.render("error500", { mensaje: errors.array().toString()});
+    }
+    var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
     daoU.createUser(usuario, function cb_crearUsuario(err, resultado) {
         if (err) {
             response.render("error500", { mensaje: err.message });
@@ -278,7 +284,15 @@ routerUsers.get("/friends/request_friend/:idUsuario", function (request, respons
                             }
                         });
                     }
+                    else{
+                        request.session.mensajePeticion = "Ese usuario ya tiene una petición tuya pendiente";
+                        response.redirect("/users/friends");
+                    }
                 });
+            }
+            else{
+                request.session.mensajePeticion = "Ya eres amigo de ese usuario";
+                response.redirect("/users/friends");
             }
         }
     });

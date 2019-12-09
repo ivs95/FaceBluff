@@ -1,13 +1,12 @@
 class utils {
 
-    createUsuario(email, password, nombre, sexo, fecha, foto) {
+    createUsuario(email, password, nombre, sexo, fecha) {
         let usuario = {
             email: email,
             password: password,
             nombre: nombre,
             sexo: sexo,
             fecha: fecha,
-            foto: foto
         }
         return usuario;
     }

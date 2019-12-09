@@ -10,18 +10,8 @@
 
 <body>
 
-    <header>
-        <div class="titulo">
-            <h1><a href= /users/my_profile>FaceBluff </a> </h1> </div> <div class="enlaces">
-                    <a href="/users/my_profile">Perfil</a>
-                    <a href="/users/friends">Amigos</a>
-                    <a href="/question/show">Preguntas</a>
-                    <a href="/users/login">Desconectar</a>
-                    <a href=""> <%= puntuacion %> puntos</a>
+        <%-include("headerConLogin", {puntuacion:puntuacion}) %>
 
-                 
-        </div>
-    </header>
     <main>
         <div class="contenido">
             <h2 class="pagina">
