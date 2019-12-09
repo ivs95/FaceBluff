@@ -54,7 +54,7 @@ create table preguntasAmigoRespondidas (
     idUsuario int NOT NULL,
     idAmigo int NOT NULL,
     idPregunta int NOT NULL,
-    acertada bit,
+    acertada int,
 
     PRIMARY KEY (idUsuario, idAmigo, idPregunta),
     FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),

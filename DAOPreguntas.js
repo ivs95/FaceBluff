@@ -99,7 +99,9 @@ class DAOPreguntas {
         })
     }
 
+    readAllNamePhot(idUsaurios_list,callback){
 
+    }
     read5Random(callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
@@ -197,7 +199,27 @@ class DAOPreguntas {
 
     }
     insertPreguntaAmigoRespondida(idUsuario,idAmigo,idPRegunta,acertada,callback){
-        
+        this.pool.getConnection(function(err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            } else {
+                let sql = "INSERT INTO preguntasAmigoRespondidas (idUsuario,idAmigo,idPregunta,acertada) VALUES (?,?,?,?)";
+                let parametros = [idUsuario,idAmigo,idPRegunta,acertada];
+                console.log(parametros);
+                conexion.query(sql, parametros, function(err, resultado) {
+                    if (err) {
+                        callback(err);
+                    } else {
+
+                        callback(null, resultado.insertId);
+                    }
+                    conexion.release();
+                })
+            }
+     
+     
+        })
     }
     readEstadoRespuestaAmigo(idUsuario,listaAmigos, idPregunta, callback){
         this.pool.getConnection(function(err, conexion) {
@@ -206,7 +228,7 @@ class DAOPreguntas {
                 callback(new Error("Error de conexión a la base de datos"));
             } else {    
                 
-                     let sql = "SELECT acertada FROM preguntasAmigoRespondidas WHERE idUsuario =? AND idAmigo IN (?) AND idPregunta =?";
+                     let sql = "SELECT * FROM preguntasAmigoRespondidas WHERE idUsuario =? AND idAmigo IN (?) AND idPregunta =?";
                      let params = [idUsuario,listaAmigos,idPregunta];
                     console.log(params);
                     conexion.query(sql,params, function(err, resultado) {

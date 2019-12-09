@@ -123,6 +123,8 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                         console.log(element);
                                         listaAmigosQueHanRespondido.push(element.idUsuario);
                                     });
+
+
                                     console.log("respuesta de los amigos del usuario a esa pregunta :  " + listaAmigosQueHanRespondido)
                                     if (listaAmigosQueHanRespondido.length != 0) {
 
@@ -133,10 +135,23 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                             else {
 
                                                 console.log("estado de la respuesta del usaurio por otro : " + result);
+                                                console.log(result);
+                                                console.log(listaAmigosQueHasAdivinado);
                                                 listaAmigosQueHasAdivinado = result;
-
+                                                listaAmigosQueHasAdivinado.forEach(function (element1) {
+                                                    
+                                                    listaAmigosQueHanRespondido.forEach(function (element2) {
+                                                        if(element2 == element1.idAmigo){
+                                                            listaAmigosQueHanRespondido.pop(element1);
+                                                        }
+                                                        
+                                                    });
+                                                });
+                                                console.log("xd")
+                                                console.log(listaAmigosQueHasAdivinado);
+                                                console.log(listaAmigosQueHanRespondido);
                                                 response.render("figura7", { puntuacion: request.session.currentUser.puntuacion, contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado: listaAmigosQueHasAdivinado })
-                                                // listaAmigos.push(result);
+                                               
                                             }
                                         })
                                     }
@@ -221,7 +236,7 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
         }
         else {
             var pregunta = result[0];
-            
+
             daoU.readById(request.params.idAmigo, function cb_readById(err, result) {
 
                 if (err) {
@@ -254,8 +269,8 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
 
                                     respuestas.push(respuestaDelAmigo.respuesta);
                                     respuestas.sort(() => Math.random() - 0.5);
-                                    
-                                    response.render("figura9.ejs",{puntuacion: request.session.currentUser.puntuacion, pregunta: pregunta, respuestas: respuestas, amigo:amigo});
+
+                                    response.render("figura9.ejs", { puntuacion: request.session.currentUser.puntuacion, pregunta: pregunta, respuestas: respuestas, amigo: amigo });
                                 }
 
                             })
@@ -274,27 +289,37 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
 
 routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", accessControl, function (request, response) {
     var respuestaElegida = request.body.seleccion;
-    daoP.readRespuestaCorrecta(request.params.idPregunta, request.param.idAmigo, function cb_readRespuestaCorrecta(err, result) {
+    console.log(respuestaElegida);
+    var acertada = 0;
+    daoP.readRespuestaCorrecta(request.params.idPregunta, request.params.idAmigo, function cb_readRespuestaCorrecta(err, result) {
         if (err) {
             console.log(err.message);
         }
         else {
             var respuestaCorrecta = result[0];
-            if (respuestaCorrecta.respuesta == respuestaElegida) {
+
+            if (respuestaCorrecta.respuesta.trim() == respuestaElegida.trim()) {
 
                 //actailziar puntuacion
+                console.log("entro entro")
 
-                
-
-                daoU.increasePoints( request.session.currentUser.idUsuario, 50, function cb_increasePoints(err) {
+                acertada = 1;
+                daoU.increasePoints(request.session.currentUser.idUsuario, 50, function cb_increasePoints(err) {
                     if (err) {
                         console.log(err.message);
                     }
+
 
                 });
 
 
             }
+            daoP.insertPreguntaAmigoRespondida(request.session.currentUser.idUsuario, request.params.idAmigo, request.params.idPregunta, acertada, function cb_insertPreguntaAmigoRespondida(err, result) {
+                if (err) {
+                    console.log(err.message);
+                }
+            }
+            );
             response.redirect("/question/selected/" + request.params.idPregunta);
 
         }
@@ -309,7 +334,7 @@ routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", accessControl, funct
 
 routerQuestions.get("/create", accessControl, function (request, response) {
 
-    response.render("figura10",{puntuacion: request.session.currentUser.puntuacion});
+    response.render("figura10", { puntuacion: request.session.currentUser.puntuacion });
 });
 routerQuestions.post("/create", accessControl, function (request, response) {
     let enunciado = request.body.enunciado;

@@ -185,6 +185,12 @@ class DAOUsuario {
         })
     }
 
+
+    
+
+
+
+
     increasePoints(id, puntuacion, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {

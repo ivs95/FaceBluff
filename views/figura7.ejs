@@ -41,16 +41,16 @@
                 <% listaAmigos.forEach(function(element) { %>
                     <section class="respuestas">
                     <span><%= element %></span>
-                    <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
+                    <img class="fotoSolicitud" src="">
                     <a class="aceptaAmigo" href=<%= "/question/answerToOther/" + pregunta.idPregunta + "/" + element %>> Adivinar</a>
                    
                 <% }); %>
                 <% listaAmigosQueHasAdivinado.forEach(function(element) { %>
                     <section class="respuestas">
-                        <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                        <span><%= element %></span>
+                        <img class="fotoSolicitud" src="">
+                        <span><%= element.idUsuario %></span>
                         <% if(element.acertada==true) {%>
-                            <span class="acierto ">Has acertado!</span>
+                            <span class="acierto">Has acertado!</span>
                         <%} else if(element.acertada==false) {%>
                             <span class="fallo">Has fallado!</span>
                             <%}%>
