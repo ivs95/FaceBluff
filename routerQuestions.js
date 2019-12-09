@@ -121,7 +121,7 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                     let listaAmigosQueHasAdivinado = [];
                                     result.forEach(function (element) {
                                         console.log(element);
-                                        listaAmigosQueHanRespondido.push(element.idUsuario);
+                                        listaAmigosQueHanRespondido.push(element);
                                     });
 
                                     console.log("respuesta de los amigos del usuario a esa pregunta :  " + listaAmigosQueHanRespondido)
@@ -140,7 +140,7 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                                 listaAmigosQueHasAdivinado.forEach(function (element1) {
                                                     
                                                     listaAmigosQueHanRespondido.forEach(function (element2) {
-                                                        if(element2 == element1.idAmigo){
+                                                        if(element2.idUsuario == element1.idAmigo){
                                                             listaAmigosQueHanRespondido.pop(element1);
                                                         }
                                                         

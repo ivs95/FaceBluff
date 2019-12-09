@@ -67,10 +67,10 @@ routerUsers.get("/login", function (request, response) {
 routerUsers.use(bodyParser.urlencoded({ extended: false }));
 
 
-routerUsers.post("/login", [check('email').isEmail(), check('password').isLength({min : 1})], function (request, response) {
+routerUsers.post("/login", [check('email').isEmail(), check('password').isLength({ min: 1 })], function (request, response) {
     const errors = validationResult(request);
-    if (!errors.isEmpty()){
-        response.render("error500", { mensaje: errors.array().toString()});
+    if (!errors.isEmpty()) {
+        response.render("error500", { mensaje: errors.array().toString() });
     }
     let email = request.body.email;
     let password = request.body.password;
@@ -104,7 +104,7 @@ routerUsers.get("/my_profile", accessControl, function (request, response) {
         else {
             let usuario = result;
             request.session.currentUser.edad = ut.calculateAge(usuario.fecha);
-            response.render("figura3", {  puntuacion:request.session.currentUser.puntuacion, usuario: request.session.currentUser });
+            response.render("figura3", { puntuacion: request.session.currentUser.puntuacion, usuario: request.session.currentUser });
 
         }
     })
@@ -121,7 +121,7 @@ routerUsers.get("/profile/:idUsuario", accessControl, function (request, respons
         else {
             let usuario = result;
             usuario.edad = ut.calculateAge(usuario.fecha);
-            response.render("figura3b", {  puntuacion:request.session.currentUser.puntuacion, usuario: usuario });
+            response.render("figura3b", { puntuacion: request.session.currentUser.puntuacion, usuario: usuario });
         }
     });
 
@@ -131,9 +131,9 @@ routerUsers.get("/update_user", accessControl, function (request, response) {
     response.render("figura11", { usuario: request.session.currentUser })
 });
 
-routerUsers.post("/update_user",[check('email').isEmail(), check('password').isLength({min:1}), check('nombre').isLength({min:1}), check('sexo').notEmpty()], accessControl, function (request, response) {
-    if (!errors.isEmpty()){
-        response.render("error500", { mensaje: errors.array().toString()});
+routerUsers.post("/update_user", [check('email').isEmail(), check('password').isLength({ min: 1 }), check('nombre').isLength({ min: 1 }), check('sexo').notEmpty()], accessControl, function (request, response) {
+    if (!errors.isEmpty()) {
+        response.render("error500", { mensaje: errors.array().toString() });
     }
     var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
     daoU.updateUser(usuario, request.session.currentUser.idUsuario, function cb_updateUser(err, result) {
@@ -165,36 +165,40 @@ routerUsers.get("/imagen/:idUsuario", function (request, response) {
             response.render("error500", { mensaje: err.message })
         }
         else if (resultado == null) {
-            response.sendFile(path.join(__dirname,"public","img","imagenPorDefecto.jpg"));
+            response.sendFile(path.join(__dirname, "public", "img", "imagenPorDefecto.jpg"));
         }
         else {
-            response.sendFile(path.join(__dirname, "public","img", resultado.imagen));
+            response.sendFile(path.join(__dirname, "public", "img", resultado.imagen));
         }
     });
 });
 
-routerUsers.post("/new_user",[check('email').isEmail(), check('password').isLength({min:1}), check('nombre').isLength({min:1}), check('sexo').notEmpty()], multerFactory.single("foto"), function (request, response) {
-    if (!errors.isEmpty()){
-        response.render("error500", { mensaje: errors.array().toString()});
+routerUsers.post("/new_user", [check('email').isEmail(), check('password').isLength({ min: 1 }), check('nombre').isLength({ min: 1 }), check('sexo').notEmpty()], multerFactory.single("foto"), function (request, response) {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        console.log(errors)
+        response.render("error500", { mensaje: errors.array().toString() });
     }
-    var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
-    daoU.createUser(usuario, function cb_crearUsuario(err, resultado) {
-        if (err) {
-            response.render("error500", { mensaje: err.message });
-        }
-        else {
-            if (request.file) {
-                daoI.insertImagenPerfil(request.file.filename, resultado, function cb_insertImagen(err) {
-                    if (err) {
-                        response.render("error500", { mensaje: err.message });
-                    }
-                    else {
-                        response.redirect("/users/login");
-                    }
-                });
+    else {
+        var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
+        daoU.createUser(usuario, function cb_crearUsuario(err, resultado) {
+            if (err) {
+                response.render("error500", { mensaje: err.message });
             }
-        }
-    })
+            else {
+                if (request.file) {
+                    daoI.insertImagenPerfil(request.file.filename, resultado, function cb_insertImagen(err) {
+                        if (err) {
+                            response.render("error500", { mensaje: err.message });
+                        }
+                        else {
+                            response.redirect("/users/login");
+                        }
+                    });
+                }
+            }
+        })
+    }
 });
 
 
@@ -205,7 +209,7 @@ routerUsers.post("/search", function (request, response) {
             response.render("error500", { mensaje: err.message });
         }
         else {
-            response.render("figura5", { puntuacion:request.session.currentUser.puntuacion, usuarios: result });
+            response.render("figura5", { puntuacion: request.session.currentUser.puntuacion, usuarios: result });
         }
     });
 });
@@ -284,13 +288,13 @@ routerUsers.get("/friends/request_friend/:idUsuario", function (request, respons
                             }
                         });
                     }
-                    else{
+                    else {
                         request.session.mensajePeticion = "Ese usuario ya tiene una petición tuya pendiente";
                         response.redirect("/users/friends");
                     }
                 });
             }
-            else{
+            else {
                 request.session.mensajePeticion = "Ya eres amigo de ese usuario";
                 response.redirect("/users/friends");
             }

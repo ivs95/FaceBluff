@@ -153,7 +153,7 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT idUsuario,respuesta FROM preguntasRespondidas WHERE idPregunta = "+ idPregunta+" AND idUsuario IN ("+listaAmigos+")";
+                let sql = "SELECT preguntasRespondidas.idUsuario,preguntasRespondidas.respuesta usuarios.nombre FROM preguntasRespondidas INNER JOIN  usuarios ON preguntasRespondidas.idUsuario = usuarios.idUsuario WHERE preguntasRespondidas.idPregunta = "+ idPregunta+" AND preguntasRespondidas.idUsuario IN ("+listaAmigos+")";
                 //let parametros = [idPregunta,listaAmigos];
                 //console.log(parametros);
                 conexion.query(sql, function(err, result) {

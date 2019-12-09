@@ -30,8 +30,8 @@
 
                 <% listaAmigos.forEach(function(element) { %>
                     <section class="respuestas">
-                    <span><%= element %></span>
-                    <img class="fotoSolicitud" src="">
+                    <span><%= element.nombre %></span>
+                    <img class="fotoSolicitud" src=<%="/users/imagen/"+element.idUsuario%>>
                     <a class="aceptaAmigo" href=<%= "/question/answerToOther/" + pregunta.idPregunta + "/" + element %>> Adivinar</a>
                    
                 <% }); %>
