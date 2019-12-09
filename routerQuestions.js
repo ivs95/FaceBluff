@@ -309,7 +309,7 @@ routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", accessControl, funct
 
 routerQuestions.get("/create", accessControl, function (request, response) {
 
-    response.render("figura10");
+    response.render("figura10",{puntuacion: request.session.currentUser.puntuacion});
 });
 routerQuestions.post("/create", accessControl, function (request, response) {
     let enunciado = request.body.enunciado;
