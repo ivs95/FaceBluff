@@ -142,10 +142,11 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE idUsuario=? ";
+                console.log(id);
+                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE idUsuario = ?  ";
                 conexion.query(sql, id, function (err, resultado) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     }
                     else if (resultado) {
                         callback(null, resultado[0]);
@@ -170,7 +171,7 @@ class DAOUsuario {
                 let sql = "SELECT idUsuario, nombre FROM usuarios WHERE idUsuario=? ";
                 conexion.query(sql, name, function (err, resultado) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     }
                     else if (resultado) {
                         callback(null, resultado);

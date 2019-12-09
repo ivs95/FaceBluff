@@ -122,7 +122,7 @@ class DAOPreguntas {
     }
 
 
-    readRespuestaCorrecta(idPregunta, idUsuario,callback) {
+    readRespuestaCorrecta(idPregunta, idUsuario, callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
@@ -130,10 +130,12 @@ class DAOPreguntas {
             } else {
                 let sql = "SELECT * FROM preguntasRespondidas WHERE idPregunta=? AND idUsuario=?";
                 let parametros = [idPregunta, idUsuario];
+                
                 conexion.query(sql, parametros, function(err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     } else if (resultado) {
+                      
                         callback(null, resultado);
                     } else {
                         callback(null, false);

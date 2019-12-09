@@ -42,7 +42,7 @@
                     <section class="respuestas">
                     <span><%= element %></span>
                     <img class="fotoSolicitud" src="https://elluchador.info/web/wp-content/uploads/2017/05/fb2.jpg">
-                    <a href="/question/answerToOther/concatenarIdPregunta+idAmigo" class="aceptaAmigo">Adivinar</a>
+                    <a class="aceptaAmigo" href=<%= "/question/answerToOther/" + pregunta.idPregunta + "/" + element %>> Adivinar</a>
                    
                 <% }); %>
                 <% listaAmigosQueHasAdivinado.forEach(function(element) { %>
