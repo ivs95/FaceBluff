@@ -10,7 +10,7 @@
 
 <body>
     <%-include("headerConLogin", {puntuacion:puntuacion}) %>
-    
+
     <main>
         <div class="contenido">
             <h2 class="pagina">
@@ -29,13 +29,24 @@
                 </div>
             </div>
             <br>
-
-            <a href="/users/update_user" class="login">Modificar</a>
+            <div class="botones">
+                <a href="/users/update_user" class="login">Modificar</a>
+                <form method="POST" action="/users/upload_img" class="formulario" enctype="multipart/form-data">
+                    <input type="file" name="foto">
+                    <input type="submit" value="Subir foto" class="login">
+                </form>
+            </div>
+            <div class="imagenes">
+                <% listaFotos.forEach(function(element) { %>
+                <div>
+                    <img class="fotoNormal" src=<%="/users/imagenNormal/"+element%>>
+                </div>
+                <% }); %>
+            </div>
         </div>
-
-
+        <div class="mensaje">
+            <p><%=mensaje%></p>
         </div>
-
     </main>
 </body>
 

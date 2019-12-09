@@ -59,21 +59,23 @@ class DAOUsuario {
             }
         })
     }
+
     readListaUsuarios(listaIds, callback){
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                console.log(listaIds);
-                let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE idUsuario IN (?)" ;
-                conexion.query(sql,listaIds, function (err, resultado) {
+                let sql = "SELECT * FROM usuarios WHERE idUsuario IN ( " + "?" +" )" ;
+                conexion.query(sql, listaIds, function (err, resultado) {
                     if (err) {
                        callback(err);
                     }
                     else if (resultado) {
-                        console.log(resultado)
+                        resultado.forEach(element => {
+                            console.log(element);
+                        });
+                        console.log("El resultado es " + resultado)
                         callback(null, resultado);
                     }
                     else {
@@ -82,6 +84,28 @@ class DAOUsuario {
                     conexion.release();
                 })
             }
+        })
+    }
+
+    updatePuntuacion(id,puntuacion, callback) {
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "UPDATE usuarios SET puntuacion=? where idUsuario=?;";
+                let parametros = [puntuacion, id];
+                conexion.query(sql, parametros, function (err) {
+                    if (err) {
+                        callback(new Error("Error de acceso a la base de datos"));
+                    }
+                    else {
+                        callback(null);
+                    }
+                    conexion.release();
+                })
+            } 
         })
     }
 
@@ -95,11 +119,9 @@ class DAOUsuario {
                 let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE email=? ";
                 conexion.query(sql, email, function (err, resultado) {
                     if (err) {
-                       // callback(new Error("Error de acceso a la base de datos"));
-                       callback(err);
+                       callback(new Error("Error de acceso a la base de datos"));
                     }
                     else if (resultado) {
-                        console.log(resultado)
                         callback(null, resultado);
                     }
                     else {

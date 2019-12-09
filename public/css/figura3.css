@@ -62,6 +62,10 @@ body {
     background: #ffff99;
 }
 
+.botones{
+    display:flex;
+}
+
 .pagina {
     padding-bottom: 5%;
 }

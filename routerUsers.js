@@ -101,6 +101,8 @@ routerUsers.post("/login", [check('email').isEmail(), check('password').not().is
 //Usar middleware de control de acceso con app.use(middlewareacceso)
 
 routerUsers.get("/my_profile", accessControl, function (request, response) {
+    let mensaje = request.session.mensajePerfil;
+    delete request.session.mensajePerfil;
     daoU.readById(request.session.currentUser.idUsuario, function cb_readById(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
@@ -108,7 +110,16 @@ routerUsers.get("/my_profile", accessControl, function (request, response) {
         else {
             let usuario = result;
             request.session.currentUser.edad = ut.calculateAge(usuario.fecha);
-            response.render("figura3", { puntuacion: request.session.currentUser.puntuacion, usuario: request.session.currentUser });
+            let listaFotos = [];
+            daoI.readImagenesExtra(usuario.idUsuario, function cb_readExtraImg(err, result) {
+                if (err) {
+                    response.render("error500", { mensaje: err.message });
+                }
+                else {
+                    listaFotos = result;
+                    response.render("figura3", { puntuacion: request.session.currentUser.puntuacion, usuario: request.session.currentUser, listaFotos: listaFotos, mensaje: mensaje });
+                }
+            })
 
         }
     })
@@ -157,12 +168,48 @@ routerUsers.post("/update_user", [check('email').isEmail(), check('password').no
 });
 
 
+routerUsers.post("/upload_img", accessControl, multerFactory.single("foto"), function (request, response) {
+
+    if (request.file) {
+        if (request.session.currentUser.puntuacion >= 100) {
+            daoI.insertImagenExtra(request.file.filename, resultado, function cb_insertImagen(err) {
+                if (err) {
+                    response.render("error500", { mensaje: err.message });
+                }
+                else {
+                    daoU.updatePuntuacion(idUsuario, request.session.currentUser.puntuacion - 100, function cb_updatePuntuacion(err) {
+                        if (err) {
+                            response.render("error500", { mensaje: err.message });
+                        }
+                        else {
+                            request.session.mensajePerfil = "Imagen añadida con éxito";
+                            request.session.currentUser.puntuacion -= 100;
+                            response.redirect("/users/my_profile");
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            request.session.mensajePerfil = "No tienes puntos suficientes para añadir una imagen a tu perfil"
+            response.redirect("/users/my_profile");
+
+        }
+    }
+    else {
+        request.session.mensajePerfil = "No has seleccionado ninguna foto para añadir"
+        response.redirect("/users/profile/" + request.session.currentUser.idUsuario);
+    }
+
+});
+
+
 routerUsers.get("/new_user", function (request, response) {
     response.render("figura2")
 });
 
-routerUsers.get("/imagenes/:idUsuario", function (request, response) {
-
+routerUsers.get("/imagenNormal/:ruta", function (request, response) {
+    response.sendFile(path.join(__dirname, "public", "img", request.params.ruta));
 });
 
 routerUsers.get("/imagen/:idUsuario", function (request, response) {
@@ -179,11 +226,9 @@ routerUsers.get("/imagen/:idUsuario", function (request, response) {
     });
 });
 
-routerUsers.post("/new_user",  multerFactory.single("foto"), [check('email').isEmail(), check('password').not().isEmpty(), check('nombre').not().isEmpty(), check('sexo').not().isEmpty()], (request, response) => {
+routerUsers.post("/new_user", multerFactory.single("foto"), [check('email').isEmail(), check('password').not().isEmpty(), check('nombre').not().isEmpty(), check('sexo').not().isEmpty()], (request, response) => {
     var errors = validationResult(request).array();
-    console.log(errors);
     if (errors.length > 0) {
-        console.log(errors)
         response.render("error500", { mensaje: "Error de validacion" });
     }
     else {
@@ -203,7 +248,7 @@ routerUsers.post("/new_user",  multerFactory.single("foto"), [check('email').isE
                         }
                     });
                 }
-                else{
+                else {
                     response.redirect("/users/login");
                 }
             }
@@ -249,25 +294,23 @@ routerUsers.get("/friends", function (request, response) {
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
-                    let listaIds = [];
-                    result.forEach(element => {
-                        listaIds.push(element.idAmigo);
-                    });
-                    if (listaIds.length > 0) {
-                        daoU.readListaUsuarios(listaIds, function cb_readListaUsuarios(err, resultado) {
-                            if (err) {
-                                response.render("error500", { mensaje: err.message });
-                            }
-                            else {
-                                listaAmigos = resultado;
-                                response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
-                            }
+                    if (result.length > 0) {
+                        result.forEach((element, index, array) => {
+                            daoU.readById(element.idAmigo, function cb_readByID(err, resultado) {
+                                if (err) {
+                                    response.render("error500", { mensaje: err.message });
+                                }
+                                else {
+                                    listaAmigos.push(resultado);
+                                    if (index == (array.length - 1))
+                                        response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
+                                }
+                            })
                         });
                     }
                     else {
                         response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
                     }
-
                 }
             });
         }

@@ -304,9 +304,12 @@ routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", accessControl, funct
                 console.log("entro entro")
 
                 acertada = 1;
-                daoU.increasePoints(request.session.currentUser.idUsuario, 50, function cb_increasePoints(err) {
+                daoU.updatePuntuacion(request.session.currentUser.idUsuario, request.session.currentUser.puntuacion + 50, function cb_increasePoints(err) {
                     if (err) {
                         console.log(err.message);
+                    }
+                    else{
+                        request.session.currentUser.puntuacion += 50;
                     }
 
 

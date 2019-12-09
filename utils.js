@@ -26,7 +26,13 @@ class utils {
         }
         return pregunta;
     }
-
+    devuelveListaIn(lista){
+        let retorno = "";
+        lista.forEach(element => {
+            retorno += element + ",";
+        });
+        return retorno.slice(0, -1);
+    }
   
     calculateAge(birthday) {
         var isoDate = new Date(birthday).toISOString();        
