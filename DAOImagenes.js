@@ -31,6 +31,28 @@ class DAOImagenes {
         })
     }
 
+    updateImagenPerfil(ruta, idUsuario, callback){
+        this.pool.getConnection(function (err, conexion) {
+            if (err) {
+                console.log(err);
+                callback(new Error("Error de conexión a la base de datos"));
+            }
+            else {
+                let sql = "UPDATE imagenes SET imagen = ? WHERE idUsuario = ? AND perfil = 1;";
+                let parametros = [ruta,idUsuario];
+                conexion.query(sql, parametros, function (err) {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null);
+                    }
+                    conexion.release();
+                })
+            }
+        })
+    }
+
     insertImagenExtra(ruta, idUsuario, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
@@ -90,6 +112,7 @@ class DAOImagenes {
                         callback(err);
                     }
                     else {
+                        console.log(resultado);
                         callback(null, resultado);
                     }
                     conexion.release();

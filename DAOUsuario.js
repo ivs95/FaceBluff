@@ -37,20 +37,20 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "UPDATE usuarios SET email='" + usuario.email + "',nombre='" + usuario.nombre + "',contraseña='" + usuario.password +
-                    "',genero ='" + usuario.sexo + "',fecha='" + usuario.fecha + "' WHERE idUsuario ="+ id+";";
-                
-                conexion.query(sql, function (err, resultado) {
+                let sql = "UPDATE usuarios SET email= ? ,nombre= ? ,contraseña= ? ,genero = ? ,fecha= ? WHERE idUsuario =?";
+                let parametros = [usuario.email, usuario.nombre, usuario.password, usuario.sexo, usuario.fecha, id];
+                conexion.query(sql,parametros, function (err, resultado) {
                     if (err) {
                         callback(err);
                     }
                     else {
                         var result ={
-                            password :usuario.password,
+                            idUsuario : id,
+                            contraseña :usuario.password,
                             email : usuario.email,
                             nombre : usuario.nombre,
                             fecha :  usuario.fecha,
-                            genero : usuario.genero
+                            genero : usuario.sexo
                         }
                         callback(null, result);
                     }
@@ -164,7 +164,6 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                console.log(id);
                 let sql = "SELECT idUsuario,nombre,email,contraseña,genero,fecha,puntuacion FROM usuarios WHERE idUsuario = ?  ";
                 conexion.query(sql, id, function (err, resultado) {
                     if (err) {

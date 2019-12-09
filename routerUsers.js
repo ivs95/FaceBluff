@@ -32,9 +32,7 @@ routerUsers.use(express.static(ficherosEstaticos));
 
 function accessControl(request, response, next) {
 
-
     if (request.session.currentUser != null) {
-
         daoU.isUserCorrect(request.session.currentUser.email, request.session.currentUser.contraseña, function cB_isUserCorrect(err, result) {
             if (err) {
                 response.render("error500", { mensaje: err.message });
@@ -97,9 +95,6 @@ routerUsers.post("/login", [check('email').isEmail(), check('password').not().is
 });
 
 
-
-//Usar middleware de control de acceso con app.use(middlewareacceso)
-
 routerUsers.get("/my_profile", accessControl, function (request, response) {
     let mensaje = request.session.mensajePerfil;
     delete request.session.mensajePerfil;
@@ -143,10 +138,10 @@ routerUsers.get("/profile/:idUsuario", accessControl, function (request, respons
 });
 
 routerUsers.get("/update_user", accessControl, function (request, response) {
-    response.render("figura11", { usuario: request.session.currentUser })
+    response.render("figura11", { puntuacion: request.session.currentUser.puntuacion, usuario: request.session.currentUser })
 });
 
-routerUsers.post("/update_user", [check('email').isEmail(), check('password').not().isEmpty(), check('nombre').not().isEmpty(), check('sexo').notEmpty()], accessControl, (request, response) => {
+routerUsers.post("/update_user", multerFactory.single("foto"), [check('email').isEmail(), check('password').not().isEmpty(), check('nombre').not().isEmpty(), check('sexo').notEmpty()], accessControl, (request, response) => {
     var errors = validationResult(request).array();
     if (errors.length > 0) {
         response.render("error500", { mensaje: "Error de validacion" });
@@ -156,12 +151,24 @@ routerUsers.post("/update_user", [check('email').isEmail(), check('password').no
         daoU.updateUser(usuario, request.session.currentUser.idUsuario, function cb_updateUser(err, result) {
             if (err) {
                 response.render("error500", { mensaje: err.message });
-
             }
             else if (result != null) {
                 request.session.currentUser = result;
-
-                response.redirect("/users/profile/" + request.session.currentUser.idUsuario);
+                if (request.file) {
+                    daoI.updateImagenPerfil(request.file.filename, request.session.idUsuario, function cb_insertImagen(err) {
+                        if (err) {
+                            response.render("error500", { mensaje: err.message });
+                        }
+                        else {
+                            request.session.mensajePerfil = "Modificación del perfil realizada con éxito"
+                            response.redirect("/users/my_profile");
+                        }
+                    });
+                }
+                else {
+                    request.session.mensajePerfil = "Modificación del perfil realizada con éxito"
+                    response.redirect("/users/my_profile");
+                }
             }
         });
     }
@@ -172,12 +179,12 @@ routerUsers.post("/upload_img", accessControl, multerFactory.single("foto"), fun
 
     if (request.file) {
         if (request.session.currentUser.puntuacion >= 100) {
-            daoI.insertImagenExtra(request.file.filename, resultado, function cb_insertImagen(err) {
+            daoI.insertImagenExtra(request.file.filename, request.session.currentUser.idUsuario, function cb_insertImagen(err) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
-                    daoU.updatePuntuacion(idUsuario, request.session.currentUser.puntuacion - 100, function cb_updatePuntuacion(err) {
+                    daoU.updatePuntuacion(request.session.currentUser.idUsuario, request.session.currentUser.puntuacion - 100, function cb_updatePuntuacion(err) {
                         if (err) {
                             response.render("error500", { mensaje: err.message });
                         }
@@ -198,7 +205,7 @@ routerUsers.post("/upload_img", accessControl, multerFactory.single("foto"), fun
     }
     else {
         request.session.mensajePerfil = "No has seleccionado ninguna foto para añadir"
-        response.redirect("/users/profile/" + request.session.currentUser.idUsuario);
+        response.redirect("/users/my_profile");
     }
 
 });
