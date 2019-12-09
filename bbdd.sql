@@ -35,7 +35,7 @@ create table preguntas (
 
 
 create table preguntasRespondidas (
-  idPregunta int NOT NULL UNIQUE AUTO_INCREMENT,
+  idPregunta int NOT NULL ,
   idUsuario int  NOT NULL,
   respuesta LONGTEXT,
   PRIMARY KEY (idUsuario, idPregunta),

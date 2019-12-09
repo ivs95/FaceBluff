@@ -89,7 +89,7 @@ class DAOPreguntas {
                 let parametros = [idPregunta, idUsuario, respuestaCorrecta];
                 conexion.query(sql, parametros, function(err) {
                     if (err) {
-                        callback(new Error("Error de acceso a la base de datos"));
+                        callback(err);
                     } else  
                         callback(null);
                   
@@ -226,9 +226,9 @@ class DAOPreguntas {
                 callback(new Error("Error de conexión a la base de datos"));
             } else {    
     
-                     let sql = "SELECT preguntasAmigoRespondidas.idAmigo,preguntasAmigoRespondidas.acertada,usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON preguntasAmigoRespondidas.idAmigo=usuarios.idUsuario WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN (?) AND preguntasAmigoRespondidas.idPregunta =?";
+                     let sql = "SELECT preguntasAmigoRespondidas.idAmigo, preguntasAmigoRespondidas.acertada, usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON preguntasAmigoRespondidas.idAmigo=usuarios.idUsuario WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN (?) AND preguntasAmigoRespondidas.idPregunta = ? ";
                      let params = [idUsuario,listaAmigos,idPregunta];
-                   console.log(params);
+                   
                     conexion.query(sql,params, function(err, resultado) {
                         
                     if (err) {
@@ -241,9 +241,6 @@ class DAOPreguntas {
                     conexion.release();
                 })
             }
-    
-        
-
         })
     }
 
