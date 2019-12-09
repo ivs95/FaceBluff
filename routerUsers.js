@@ -67,29 +67,33 @@ routerUsers.get("/login", function (request, response) {
 routerUsers.use(bodyParser.urlencoded({ extended: false }));
 
 
-routerUsers.post("/login", [check('email').isEmail(), check('password').isLength({ min: 1 })], function (request, response) {
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        response.render("error500", { mensaje: errors.array().toString() });
+
+
+
+routerUsers.post("/login", [check('email').isEmail(), check('password').not().isEmpty()], (request, response) => {
+    var errors = validationResult(request).array();
+    if (errors.length > 0) {
+        response.render("error500", { mensaje: "Error de validacion" });
     }
-    let email = request.body.email;
-    let password = request.body.password;
+    else {
+        let email = request.body.email;
+        let password = request.body.password;
 
-    daoU.isUserCorrect(email, password, function cB_isUserCorrect(err, result) {
-        if (err) {
-            response.render("error500", { mensaje: err.message });
-        }
-        else if (result == false) {
-            request.session.errorMsg = "El usuario y contraseña que has introducido no son correctos";
-            response.redirect("/users/login");
+        daoU.isUserCorrect(email, password, function cB_isUserCorrect(err, result) {
+            if (err) {
+                response.render("error500", { mensaje: err.message });
+            }
+            else if (result == false) {
+                request.session.errorMsg = "El usuario y contraseña que has introducido no son correctos";
+                response.redirect("/users/login");
 
-        }
-        else {
-            request.session.currentUser = result[0];
-            response.redirect("/users/my_profile");
-        }
-    });
-
+            }
+            else {
+                request.session.currentUser = result[0];
+                response.redirect("/users/my_profile");
+            }
+        });
+    }
 });
 
 
@@ -131,23 +135,25 @@ routerUsers.get("/update_user", accessControl, function (request, response) {
     response.render("figura11", { usuario: request.session.currentUser })
 });
 
-routerUsers.post("/update_user", [check('email').isEmail(), check('password').isLength({ min: 1 }), check('nombre').isLength({ min: 1 }), check('sexo').notEmpty()], accessControl, function (request, response) {
-    if (!errors.isEmpty()) {
-        response.render("error500", { mensaje: errors.array().toString() });
+routerUsers.post("/update_user", [check('email').isEmail(), check('password').not().isEmpty(), check('nombre').not().isEmpty(), check('sexo').notEmpty()], accessControl, (request, response) => {
+    var errors = validationResult(request).array();
+    if (errors.length > 0) {
+        response.render("error500", { mensaje: "Error de validacion" });
     }
-    var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
-    daoU.updateUser(usuario, request.session.currentUser.idUsuario, function cb_updateUser(err, result) {
-        if (err) {
-            response.render("error500", { mensaje: err.message });
+    else {
+        var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
+        daoU.updateUser(usuario, request.session.currentUser.idUsuario, function cb_updateUser(err, result) {
+            if (err) {
+                response.render("error500", { mensaje: err.message });
 
-        }
-        else if (result != null) {
-            request.session.currentUser = result;
+            }
+            else if (result != null) {
+                request.session.currentUser = result;
 
-            response.redirect("/users/profile/" + request.session.currentUser.idUsuario);
-        }
-    });
-
+                response.redirect("/users/profile/" + request.session.currentUser.idUsuario);
+            }
+        });
+    }
 });
 
 
@@ -173,11 +179,12 @@ routerUsers.get("/imagen/:idUsuario", function (request, response) {
     });
 });
 
-routerUsers.post("/new_user", [check('email').isEmail(), check('password').isLength({ min: 1 }), check('nombre').isLength({ min: 1 }), check('sexo').notEmpty()], multerFactory.single("foto"), function (request, response) {
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
+routerUsers.post("/new_user",  multerFactory.single("foto"), [check('email').isEmail(), check('password').not().isEmpty(), check('nombre').not().isEmpty(), check('sexo').not().isEmpty()], (request, response) => {
+    var errors = validationResult(request).array();
+    console.log(errors);
+    if (errors.length > 0) {
         console.log(errors)
-        response.render("error500", { mensaje: errors.array().toString() });
+        response.render("error500", { mensaje: "Error de validacion" });
     }
     else {
         var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
@@ -195,6 +202,9 @@ routerUsers.post("/new_user", [check('email').isEmail(), check('password').isLen
                             response.redirect("/users/login");
                         }
                     });
+                }
+                else{
+                    response.redirect("/users/login");
                 }
             }
         })

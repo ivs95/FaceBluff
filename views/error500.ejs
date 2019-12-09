@@ -11,22 +11,14 @@
 </head>
 
 <body>
-    <header>
-        <div class="titulo">
-            <h1><a href = /users/my_profile>FaceBluff</a></h1>
-        </div>
-        <div class="enlaces">
-            <a href="/users/my_profile">Perfil</a>
-            <a href="/users/friends">Amigos</a>
-            <a href="/question/show">Preguntas</a>
-            <a href="/users/login">Desconectar</a>
+    <%-include("headerSinLogin") %>
 
+    <main>
+        <div class="contenido">
+            <h1>500 - Error interno del servidor</h1>
+            <p>Se ha producido el siguiente error: <%= mensaje %></p>
         </div>
-    </header>
-    <div class="contenido">
-        <h1>500 - Error interno del servidor</h1>
-        <p>Se ha producido el siguiente error: <%= mensaje %></p>
-    </div>
+    </main>
 </body>
 
 </html>
