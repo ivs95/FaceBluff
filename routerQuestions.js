@@ -8,6 +8,8 @@ const path = require("path");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const { check, validationResult } = require('express-validator');
+
 //const expressValidator = require("express-validator");
 
 const routerQuestions = express.Router();
@@ -60,7 +62,6 @@ routerQuestions.get("/show", accessControl, function (request, response) {
             response.render("error500", { mensaje: err.message });
         } else {
             let listaPreguntas = result;
-            console.log(listaPreguntas);
             response.render("figura6", { puntuacion: request.session.currentUser.puntuacion, listaPreguntas: listaPreguntas });
 
         }
@@ -71,7 +72,6 @@ routerQuestions.get("/show", accessControl, function (request, response) {
 routerQuestions.get("/selected/:idPregunta", accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
-    console.log("----------------")
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
 
@@ -128,9 +128,7 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                                     response.render("error500", { mensaje: err.message });
                                                 } else {
 
-
                                                     listaAmigosQueHasAdivinado = result;
-
                                                     listaAmigosFinal = [];
                                                     listaAmigosQueHasAdivinado.forEach(function (element1) {
 
@@ -184,18 +182,15 @@ routerQuestions.get("/answer/:idPregunta", accessControl, function (request, res
             response.render("error500", { mensaje: err.message });
         } else {
             var pregunta = result[0];
-            console.log(pregunta);
-            daoP.readRespuestasIncorrectas(request.params.idPregunta,"" , pregunta.numRespuestasInicial, function cb_readRespuestasIncorrectas(err, result) {
+            daoP.readRespuestasIncorrectas(request.params.idPregunta, "", pregunta.numRespuestasInicial, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 } else {
 
                     let respuestas = [];
-                    console.log(result);
                     result.forEach(function (element) {
                         respuestas.push(element)
                     });
-                    console.log(respuestas);
                     response.render("figura8.ejs", { puntuacion: request.session.currentUser.puntuacion, pregunta: pregunta, respuestas: respuestas });
                 }
 
@@ -205,13 +200,11 @@ routerQuestions.get("/answer/:idPregunta", accessControl, function (request, res
     });
 
 });
-routerQuestions.post("/answer/:idPregunta", accessControl, function (request, response) {
+routerQuestions.post("/answer/:idPregunta", [check('seleccion').not().isEmpty()], accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
 
-    console.log(respuestaElegida);
     //If value == otro coger el valor del textArea
-    console.log(request.session.currentUser.idUsuario);
     daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.currentUser.idUsuario, function cb_responderPregunta(err) {
         if (err) {
             response.render("error500", { mensaje: err.message });
@@ -276,7 +269,7 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
     });
 });
 
-routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", accessControl, function (request, response) {
+routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", [check('respuestaElegida').not().isEmpty()], accessControl, function (request, response) {
     var respuestaElegida = request.body.seleccion;
     console.log(respuestaElegida);
     var acertada = 0;
@@ -334,33 +327,42 @@ routerQuestions.get("/create", accessControl, function (request, response) {
 
     response.render("figura10", { puntuacion: request.session.currentUser.puntuacion });
 });
-routerQuestions.post("/create", accessControl, function (request, response) {
-    let enunciado = request.body.enunciado;
-    console.log(request.body.enunciado);
-
-    let respuestas = request.body.respuestas.split("\n");
-
-    let pregunta = ut.createPregunta(enunciado, respuestas.length);
-    console.log(pregunta);
-    daoP.createPregunta(pregunta, function cb_createPregunta(err, result) {
-        if (err) {
-            response.render("error500", { mensaje: err.message });
-        } else {
-            console.log(result);
-            respuestas.forEach(element => {
-                daoP.añadirRespuestaPregunta(result, element, function cb_inserRespuestas(err) {
-                    if (err) {
-                        response.render("error500", { mensaje: err.message });
-                    }
-
-                })
-            });
 
 
-            response.redirect("/question/show");
+routerQuestions.post("/create", [check('enunciado').not().isEmpty(), check('respuestas').custom(respuestas => { if (respuestas.split("\n").length > 1) return true; return false; })], accessControl, function (request, response) {
 
-        }
-    });
+    var errors = validationResult(request).array();
+    if (errors.length > 0) {
+        response.render("error500", { mensaje: "Error de validacion" });
+    }
+    else {
+        let enunciado = request.body.enunciado;
+        console.log(request.body.enunciado);
+
+        let respuestas = request.body.respuestas.split("\n");
+
+        let pregunta = ut.createPregunta(enunciado, respuestas.length);
+        console.log(pregunta);
+        daoP.createPregunta(pregunta, function cb_createPregunta(err, result) {
+            if (err) {
+                response.render("error500", { mensaje: err.message });
+            } else {
+                console.log(result);
+                respuestas.forEach(element => {
+                    daoP.añadirRespuestaPregunta(result, element, function cb_inserRespuestas(err) {
+                        if (err) {
+                            response.render("error500", { mensaje: err.message });
+                        }
+
+                    })
+                });
+
+
+                response.redirect("/question/show");
+
+            }
+        });
+    }
 });
 
 module.exports = routerQuestions;
