@@ -33,7 +33,7 @@
                     <span><%= element.nombre %></span>
                     <img class="fotoSolicitud" src=<%="/users/imagen/"+element.idUsuario%>>
                     <a class="aceptaAmigo" href=<%= "/question/answerToOther/" + pregunta.idPregunta + "/" + element.idUsuario %>> Adivinar</a>
-                   
+                    </section>
                 <% }); %>
                 <% listaAmigosQueHasAdivinado.forEach(function(element) { %>
                     <section class="respuestas">
@@ -45,7 +45,7 @@
                             <span class="fallo">Has fallado!</span>
                             <%}%>
                     </section>
-            <% }); %>
+                 <% }); %>
             </div>
             <br>
             ¡Añade tus preguntas!

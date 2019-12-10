@@ -52,7 +52,7 @@ function accessControl(request, response, next) {
 
 };
 
-routerQuestions.get("/show", accessControl, function(request, response) {
+routerQuestions.get("/show", accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
     daoP.read5Random(function cb_read5Random(err, result) {
@@ -68,7 +68,7 @@ routerQuestions.get("/show", accessControl, function(request, response) {
 
 });
 
-routerQuestions.get("/selected/:idPregunta", accessControl, function(request, response) {
+routerQuestions.get("/selected/:idPregunta", accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
 
     console.log("----------------")
@@ -87,10 +87,10 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function(request, re
                 } else {
 
                     let listaAmigos = [];
-                    result.forEach(function(element) {
+                    result.forEach(function (element) {
                         listaAmigos.push(element.idAmigo);
                     });
-                    console.log("Amigos del usuario: " + listaAmigos + ":xxxxxxxxx");
+
                     daoP.readRespuestaCorrecta(request.params.idPregunta, request.session.currentUser.idUsuario, function cb_readRespuestaCorrecta(err, result) {
 
                         if (err) {
@@ -101,71 +101,72 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function(request, re
                             if (result == false) {
                                 contestado = false;
                             }
-                            console.log("Respuesta del usuario: " + contestado);
+                            let listaAmigosQueHanRespondido = [];
+                            let listaAmigosQueHasAdivinado = [];
+
                             // si es false el result es que no a contestaod la pregunta
-                            if (listaAmigos.length == 0)
-                                listaAmigos == null;
-                            daoP.readAllRespuestasPorID(request.params.idPregunta, listaAmigos, function cb_readAllRespuestasPorID(err, result) {
+                            if (listaAmigos.length > 0) {
+                                daoP.readAllRespuestasPorID(request.params.idPregunta, listaAmigos, function cb_readAllRespuestasPorID(err, result) {
 
-                                if (err) {
-                                    response.render("error500", { mensaje: err.message });
-                                } else {
-                                    // listaAmigosPorPregunta = result;
-                                    let listaAmigosQueHanRespondido = [];
-                                    let listaAmigosQueHasAdivinado = [];
-                                    result.forEach(function(element) {
-                                        console.log(element);
-                                        listaAmigosQueHanRespondido.push(element);
-                                    });
-                                    console.log("MOFAS")
-                                    console.log(listaAmigosQueHanRespondido);
-                                    console.log("respuesta de los amigos del usuario a esa pregunta :  " + listaAmigosQueHanRespondido)
-                                    if (listaAmigosQueHanRespondido.length != 0) {
-                                        var setIdAmigos = [];
-                                        listaAmigosQueHanRespondido.forEach(function(element) {
-                                            console.log(element);
-                                            setIdAmigos.push(element.idUsuario);
+                                    if (err) {
+                                        response.render("error500", { mensaje: err.message });
+                                    } else {
+                                        // listaAmigosPorPregunta = result;
+
+                                        result.forEach(function (element) {
+
+                                            listaAmigosQueHanRespondido.push(element);
                                         });
-                                        daoP.readEstadoRespuestaAmigo(request.session.currentUser.idUsuario, setIdAmigos, request.params.idPregunta, function cb_readEstadoRespuestaAmigo(err, result) {
-                                            if (err) {
-                                                response.render("error500", { mensaje: err.message });
-                                            } else {
+                                        if (listaAmigosQueHanRespondido.length != 0) {
+                                            var setIdAmigos = [];
+                                            listaAmigosQueHanRespondido.forEach(function (element) {
 
-                                                console.log(result);
-                                                console.log(listaAmigosQueHasAdivinado);
-                                                listaAmigosQueHasAdivinado = result;
-                                                listaAmigosQueHasAdivinado.forEach(function(element1) {
+                                                setIdAmigos.push(element.idUsuario);
+                                            });
+                                            daoP.readEstadoRespuestaAmigo(request.session.currentUser.idUsuario, setIdAmigos, request.params.idPregunta, function cb_readEstadoRespuestaAmigo(err, result) {
+                                                if (err) {
+                                                    response.render("error500", { mensaje: err.message });
+                                                } else {
 
-                                                    listaAmigosQueHanRespondido.forEach(function(element2) {
-                                                        if (element2.idUsuario == element1.idAmigo) {
-                                                            listaAmigosQueHanRespondido.pop(element1);
-                                                        }
 
+                                                    listaAmigosQueHasAdivinado = result;
+
+                                                    listaAmigosFinal = [];
+                                                    listaAmigosQueHasAdivinado.forEach(function (element1) {
+
+                                                        listaAmigosQueHanRespondido.forEach(function (element2) {
+                                                            if (element2.idUsuario == element1.idAmigo) {
+                                                                listaAmigosFinal.push(element2);
+
+                                                            }
+
+
+                                                        });
                                                     });
-                                                });
-                                                console.log("xd")
-                                                console.log(listaAmigosQueHasAdivinado);
-                                                console.log(listaAmigosQueHanRespondido);
-                                                response.render("figura7", { puntuacion: request.session.currentUser.puntuacion, contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado: listaAmigosQueHasAdivinado })
+                                                    listaAmigosFinal.forEach(function (element1) {
+                                                        listaAmigosQueHanRespondido.pop(element1);
+                                                    });
 
-                                            }
-                                        })
-                                    } else response.render("figura7", { puntuacion: request.session.currentUser.puntuacion, contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado: listaAmigosQueHasAdivinado })
-                                }
-                            });
+                                                    response.render("figura7", { puntuacion: request.session.currentUser.puntuacion, contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado: listaAmigosQueHasAdivinado })
+
+                                                }
+                                            })
+                                        } else response.render("figura7", { puntuacion: request.session.currentUser.puntuacion, contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado: listaAmigosQueHasAdivinado })
+                                    }
+                                });
+                            }
+                            else {
+                                response.render("figura7", { puntuacion: request.session.currentUser.puntuacion, contestado: contestado, pregunta: pregunta[0], listaAmigos: listaAmigosQueHanRespondido, listaAmigosQueHasAdivinado: listaAmigosQueHasAdivinado })
+                            }
                         }
-
                     })
-
                 }
             })
-
-
         }
     });
 
 });
-routerQuestions.post("/selected/:idPregunta", accessControl, function(request, response) {
+routerQuestions.post("/selected/:idPregunta", accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
     //If value == otro coger el valor del textArea
@@ -177,21 +178,21 @@ routerQuestions.post("/selected/:idPregunta", accessControl, function(request, r
 
 });
 
-routerQuestions.get("/answer/:idPregunta", accessControl, function(request, response) {
+routerQuestions.get("/answer/:idPregunta", accessControl, function (request, response) {
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         } else {
             var pregunta = result[0];
             console.log(pregunta);
-            daoP.readRespuestasIncorrectas(request.params.idPregunta, pregunta.numRespuestasInicial, function cb_readRespuestasIncorrectas(err, result) {
+            daoP.readRespuestasIncorrectas(request.params.idPregunta,"" , pregunta.numRespuestasInicial, function cb_readRespuestasIncorrectas(err, result) {
                 if (err) {
                     response.render("error500", { mensaje: err.message });
                 } else {
 
                     let respuestas = [];
                     console.log(result);
-                    result.forEach(function(element) {
+                    result.forEach(function (element) {
                         respuestas.push(element)
                     });
                     console.log(respuestas);
@@ -204,9 +205,10 @@ routerQuestions.get("/answer/:idPregunta", accessControl, function(request, resp
     });
 
 });
-routerQuestions.post("/answer/:idPregunta", accessControl, function(request, response) {
+routerQuestions.post("/answer/:idPregunta", accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
     var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
+
     console.log(respuestaElegida);
     //If value == otro coger el valor del textArea
     console.log(request.session.currentUser.idUsuario);
@@ -219,7 +221,7 @@ routerQuestions.post("/answer/:idPregunta", accessControl, function(request, res
     });
 });
 
-routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, function(request, response) {
+routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, function (request, response) {
 
     daoP.readPregunta(request.params.idPregunta, function cb_readPregunta(err, result) {
         if (err) {
@@ -243,13 +245,13 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
                             var respuestaDelAmigo = result[0];
 
                             console.log(pregunta.numRespuestasInicial);
-                            daoP.readRespuestasIncorrectas(request.params.idPregunta, (pregunta.numRespuestasInicial - 1), function cb_readRespuestasIncorrectas(err, result) {
+                            daoP.readRespuestasIncorrectas(request.params.idPregunta, respuestaDelAmigo.respuesta, (pregunta.numRespuestasInicial - 1), function cb_readRespuestasIncorrectas(err, result) {
                                 if (err) {
                                     console.log(err.message);
                                 } else {
                                     let respuestas = [];
                                     console.log(result);
-                                    result.forEach(function(element) {
+                                    result.forEach(function (element) {
                                         respuestas.push(element.respuesta)
                                     });
                                     console.log(respuestas);
@@ -274,7 +276,7 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
     });
 });
 
-routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", accessControl, function(request, response) {
+routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", accessControl, function (request, response) {
     var respuestaElegida = request.body.seleccion;
     console.log(respuestaElegida);
     var acertada = 0;
@@ -328,11 +330,11 @@ routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", accessControl, funct
 //
 
 
-routerQuestions.get("/create", accessControl, function(request, response) {
+routerQuestions.get("/create", accessControl, function (request, response) {
 
     response.render("figura10", { puntuacion: request.session.currentUser.puntuacion });
 });
-routerQuestions.post("/create", accessControl, function(request, response) {
+routerQuestions.post("/create", accessControl, function (request, response) {
     let enunciado = request.body.enunciado;
     console.log(request.body.enunciado);
 
@@ -340,7 +342,7 @@ routerQuestions.post("/create", accessControl, function(request, response) {
 
     let pregunta = ut.createPregunta(enunciado, respuestas.length);
     console.log(pregunta);
-    daoP.createPregunta(pregunta, function cb_readRespuestasIncorrectas(err, result) {
+    daoP.createPregunta(pregunta, function cb_createPregunta(err, result) {
         if (err) {
             response.render("error500", { mensaje: err.message });
         } else {

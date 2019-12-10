@@ -153,11 +153,11 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT preguntasRespondidas.idUsuario,preguntasRespondidas.respuesta,usuarios.nombre FROM preguntasRespondidas INNER JOIN  usuarios ON preguntasRespondidas.idUsuario = usuarios.idUsuario WHERE preguntasRespondidas.idPregunta = " + idPregunta + " AND preguntasRespondidas.idUsuario IN (" + listaAmigos + ")";
+                let sql = "SELECT preguntasRespondidas.idUsuario,preguntasRespondidas.respuesta,usuarios.nombre FROM preguntasRespondidas INNER JOIN  usuarios ON preguntasRespondidas.idUsuario = usuarios.idUsuario WHERE preguntasRespondidas.idPregunta = ? AND preguntasRespondidas.idUsuario IN (" + listaAmigos + ")";
                 //let parametros = [idPregunta,listaAmigos];
                 //console.log(parametros);
                 console.log("res" + listaAmigos);
-                conexion.query(sql, function(err, result) {
+                conexion.query(sql,idPregunta, function(err, result) {
 
                     if (err) {
                         callback(err);
@@ -175,18 +175,20 @@ class DAOPreguntas {
             }
         })
     }
-    readRespuestasIncorrectas(idPregunta, cantidad, callback) {
+    readRespuestasIncorrectas(idPregunta, respuestaDelAmigo, cantidad, callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT respuesta FROM respuestas WHERE idPRegunta =" + idPregunta + " ORDER BY RAND() LIMIT " + cantidad + " ;";
-
-                conexion.query(sql, function(err, resultado) {
+                let sql = "SELECT respuesta FROM respuestas WHERE idPRegunta = ? AND respuesta != ? ORDER BY RAND() LIMIT ? ;";
+                let params =[idPregunta,respuestaDelAmigo,cantidad];
+                console.log(params);
+                conexion.query(sql,params, function(err, resultado) {
                     if (err) {
                         callback(err);
                     } else if (resultado) {
+                        console.log(resultado)
                         callback(null, resultado);
                     } else {
                         callback(new Error("No existe el usuario"));
