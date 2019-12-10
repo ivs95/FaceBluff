@@ -8,7 +8,7 @@ class DAOPreguntas {
 
     }
 
-    
+
     createPregunta(pregunta, callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
@@ -22,14 +22,14 @@ class DAOPreguntas {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     } else {
-                        
+
                         callback(null, resultado.insertId);
                     }
                     conexion.release();
                 })
             }
-     
-     
+
+
         })
     }
 
@@ -58,11 +58,11 @@ class DAOPreguntas {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
-             
+
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-               
-                
+
+
                 let sql = "SELECT idPregunta,enunciado,numRespuestasInicial FROM preguntas WHERE idPregunta = ?";
                 conexion.query(sql, idPregunta, function(err, resultado) {
                     if (err) {
@@ -79,7 +79,7 @@ class DAOPreguntas {
     }
 
 
-    responderPregunta(respuestaCorrecta,idPregunta, idUsuario,callback) {
+    responderPregunta(respuestaCorrecta, idPregunta, idUsuario, callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
@@ -90,16 +90,16 @@ class DAOPreguntas {
                 conexion.query(sql, parametros, function(err) {
                     if (err) {
                         callback(err);
-                    } else  
+                    } else
                         callback(null);
-                  
+
                     conexion.release();
                 })
             }
         })
     }
 
-    
+
     read5Random(callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
@@ -130,12 +130,12 @@ class DAOPreguntas {
             } else {
                 let sql = "SELECT * FROM preguntasRespondidas WHERE idPregunta=? AND idUsuario=?";
                 let parametros = [idPregunta, idUsuario];
-                
+
                 conexion.query(sql, parametros, function(err, resultado) {
                     if (err) {
                         callback(new Error("Error de acceso a la base de datos"));
                     } else if (resultado) {
-                      
+
                         callback(null, resultado);
                     } else {
                         callback(null, false);
@@ -153,15 +153,16 @@ class DAOPreguntas {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT preguntasRespondidas.idUsuario,preguntasRespondidas.respuesta,usuarios.nombre FROM preguntasRespondidas INNER JOIN  usuarios ON preguntasRespondidas.idUsuario = usuarios.idUsuario WHERE preguntasRespondidas.idPregunta = "+ idPregunta+" AND preguntasRespondidas.idUsuario IN ("+listaAmigos+")";
+                let sql = "SELECT preguntasRespondidas.idUsuario,preguntasRespondidas.respuesta,usuarios.nombre FROM preguntasRespondidas INNER JOIN  usuarios ON preguntasRespondidas.idUsuario = usuarios.idUsuario WHERE preguntasRespondidas.idPregunta = " + idPregunta + " AND preguntasRespondidas.idUsuario IN (" + listaAmigos + ")";
                 //let parametros = [idPregunta,listaAmigos];
                 //console.log(parametros);
+                console.log("res" + listaAmigos);
                 conexion.query(sql, function(err, result) {
-                    
+
                     if (err) {
                         callback(err);
                     } else if (result) {
-                        
+
                         console.log(result);
                         callback(null, result);
                     } else {
@@ -174,13 +175,13 @@ class DAOPreguntas {
             }
         })
     }
-    readRespuestasIncorrectas(idPregunta, cantidad, callback){
+    readRespuestasIncorrectas(idPregunta, cantidad, callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
-                let sql = "SELECT respuesta FROM respuestas WHERE idPRegunta ="+idPregunta+" ORDER BY RAND() LIMIT "+cantidad+" ;";
+                let sql = "SELECT respuesta FROM respuestas WHERE idPRegunta =" + idPregunta + " ORDER BY RAND() LIMIT " + cantidad + " ;";
 
                 conexion.query(sql, function(err, resultado) {
                     if (err) {
@@ -196,14 +197,14 @@ class DAOPreguntas {
         })
 
     }
-    insertPreguntaAmigoRespondida(idUsuario,idAmigo,idPRegunta,acertada,callback){
+    insertPreguntaAmigoRespondida(idUsuario, idAmigo, idPRegunta, acertada, callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             } else {
                 let sql = "INSERT INTO preguntasAmigoRespondidas (idUsuario,idAmigo,idPregunta,acertada) VALUES (?,?,?,?)";
-                let parametros = [idUsuario,idAmigo,idPRegunta,acertada];
+                let parametros = [idUsuario, idAmigo, idPRegunta, acertada];
                 console.log(parametros);
                 conexion.query(sql, parametros, function(err, resultado) {
                     if (err) {
@@ -215,28 +216,28 @@ class DAOPreguntas {
                     conexion.release();
                 })
             }
-     
-     
+
+
         })
     }
-    readEstadoRespuestaAmigo(idUsuario,listaAmigos, idPregunta, callback){
+    readEstadoRespuestaAmigo(idUsuario, listaAmigos, idPregunta, callback) {
         this.pool.getConnection(function(err, conexion) {
             if (err) {
                 console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
-            } else {    
-    
-                     let sql = "SELECT preguntasAmigoRespondidas.idAmigo, preguntasAmigoRespondidas.acertada, usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON preguntasAmigoRespondidas.idAmigo=usuarios.idUsuario WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN ("+ listaAmigos +") AND preguntasAmigoRespondidas.idPregunta = ? ";
-                     let params = [idUsuario,idPregunta];
-                   
-                    conexion.query(sql,params, function(err, resultado) {
-                        
+            } else {
+
+                let sql = "SELECT preguntasAmigoRespondidas.idAmigo, preguntasAmigoRespondidas.acertada, usuarios.nombre FROM preguntasAmigoRespondidas INNER JOIN usuarios ON preguntasAmigoRespondidas.idAmigo=usuarios.idUsuario WHERE preguntasAmigoRespondidas.idUsuario = ? AND preguntasAmigoRespondidas.idAmigo IN (" + listaAmigos + ") AND preguntasAmigoRespondidas.idPregunta = ? ";
+                let params = [idUsuario, idPregunta];
+
+                conexion.query(sql, params, function(err, resultado) {
+
                     if (err) {
-                            callback(err);
+                        callback(err);
                     } else if (resultado) {
-                        
+
                         callback(null, resultado);
-                    
+
                     }
                     conexion.release();
                 })

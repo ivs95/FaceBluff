@@ -4,7 +4,6 @@
 
 /ERRORES:
  1. NO DEJA RESPONDER PREGUNTA A TI MISMO SI NO TIENES AMIGOS
- 2. NO INCREMENTA LA PUNTUACION
  3. NO SE SI HAS VALIDAD LOS FORMULARIOS AL CREAR PREGUNTA Y CONTESTAR (SUPONGO QUE NO)
  4. DEJA CREAR PREGUNTAS SIN RESPUESTAS
  5. SI RESPONDES UNA PREGUNTA Y NO COGES NINGUNA RESPUESTA PETA
@@ -75,7 +74,8 @@ const ficherosEstaticos = path.join(__dirname, "public");
 const MySQLStore = express_mysqlsession(express_session);
 const sessionStore = new MySQLStore(config.mysqlConfig);
 const middlewareSession = express_session({
-    saveUninitialized: false, secret: "foobar34",
+    saveUninitialized: false,
+    secret: "foobar34",
     resave: false,
     store: sessionStore
 });
@@ -94,13 +94,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //error 404
-app.use(function (request, response, next) {
+app.use(function(request, response, next) {
     response.status(404);
     response.render("error404", { url: request.url });
 });
 
 // Arrancar el servidor
-app.listen(config.port, function (err) {
+app.listen(config.port, function(err) {
     if (err) {
         console.log("ERROR al iniciar el servidor");
     } else {
