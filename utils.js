@@ -18,19 +18,6 @@ class utils {
         return respuestaElegida;
     }
 
-    createUsuarioToUpdate(id, email, password, nombre, sexo, fecha) {
-        let usuario = {
-            idUsuario: id,
-            email: email,
-            password: password,
-            nombre: nombre,
-            sexo: sexo,
-            fecha: fecha,
-        }
-        return usuario;
-    };
-
-
     createPregunta(enunciado, numRespuestas){
         let pregunta = {
             enunciado : enunciado,
@@ -38,6 +25,7 @@ class utils {
         }
         return pregunta;
     }
+    
     devuelveListaIn(lista){
         let retorno = "";
         lista.forEach(element => {

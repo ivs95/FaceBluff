@@ -50,7 +50,8 @@ class DAOUsuario {
                             email : usuario.email,
                             nombre : usuario.nombre,
                             fecha :  usuario.fecha,
-                            genero : usuario.sexo
+                            genero : usuario.sexo,
+                            puntuacion : usuario.puntuacion
                         }
                         callback(null, result);
                     }
@@ -271,8 +272,7 @@ class DAOUsuario {
                         callback(new Error("Error de acceso a la base de datos"));
                     }
                     else if (resultado != null) {
-                        
-                        callback(null, resultado);
+                        callback(null, resultado[0]);
                     }
                     else {
                         callback(null, false);

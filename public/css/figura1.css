@@ -26,11 +26,9 @@ header a {
     color: brown;
 }
 
-
-header h1 a{
+header h1 a {
     color: black;
 }
-
 
 body {
     background: #ffff99;
@@ -68,6 +66,15 @@ main {
     width: 5%;
     flex-grow: 2;
     text-align: center;
+}
+
+.login {
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    padding: 0 0.5em 0 0.5em;
+    margin-right: 0.5em;
+    margin-left: 0.5em;
 }
 
 .input {

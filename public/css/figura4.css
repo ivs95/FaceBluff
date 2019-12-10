@@ -17,6 +17,15 @@ header {
     background: linear-gradient(to bottom, #33ccff 0%, #ffff99 100%);
 }
 
+.nombre {
+    background-color: brown;
+    color: white;
+    border-radius: 5px;
+    padding: 0 0.5em 0 0.5em;
+    margin-right: 0.5em;
+    margin-left: 0.5em;
+}
+
 header h1 {
     padding: 2% 0 2% 0;
 }

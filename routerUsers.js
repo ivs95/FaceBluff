@@ -27,7 +27,6 @@ const daoA = new DAOAmigo(pool);
 const daoP = new DAOPreguntas(pool);
 const daoI = new DAOIMagenes(pool);
 routerUsers.use(express.static(ficherosEstaticos));
-//routerUsers.use(expressValidator());
 
 
 function accessControl(request, response, next) {
@@ -87,7 +86,7 @@ routerUsers.post("/login", [check('email').isEmail(), check('password').not().is
 
             }
             else {
-                request.session.currentUser = result[0];
+                request.session.currentUser = result;
                 response.redirect("/users/my_profile");
             }
         });
@@ -147,6 +146,7 @@ routerUsers.get("/profile/:idUsuario", accessControl, function (request, respons
 });
 
 routerUsers.get("/update_user", accessControl, function (request, response) {
+    console.log(request.session.currentUser);
     response.render("figura11", { puntuacion: request.session.currentUser.puntuacion, usuario: request.session.currentUser })
 });
 
