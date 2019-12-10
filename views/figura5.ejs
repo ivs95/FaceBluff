@@ -18,7 +18,7 @@
             <% usuarios.forEach(function (element) { %>
             <div>
                 <img class="fotoBusqueda" src=<%="/users/imagen/"+element.idUsuario%>>
-                <a href=<%="/users/profile/" +element.idUsuario %>><%= element.nombre %></a>
+                <a href=<%="/users/profile/" +element.idUsuario %> class = "nombre"><%= element.nombre %></a>
                 <a href=<%="/users/friends/request_friend/" +element.idUsuario %> class="solicitarAmigo">Solicitar amistad</a>
             </div>
             <% }); %>

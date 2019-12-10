@@ -26,10 +26,10 @@ header a {
     color: brown;
 }
 
-
-header h1 a{
+header h1 a {
     color: black;
 }
+
 .titulo {
     display: flex;
     justify-content: center;
@@ -83,7 +83,6 @@ body {
     padding-left: 5%;
 }
 
-
 .amigos div {
     justify-content: flex-start;
 }
@@ -92,6 +91,13 @@ body {
     width: 50%;
 }
 
+.buscar {
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    padding: 0 0.5em 0 0.5em;
+    margin-left: 1em;
+}
 
 .busqueda span {
     white-space: pre;
@@ -100,6 +106,7 @@ body {
 .amigos img {
     padding-right: 8%;
 }
+
 a {
     text-decoration: none;
 }
@@ -111,7 +118,7 @@ main a {
     padding: 0 0.5em 0 0.5em;
 }
 
-.formulario{
+.formulario {
     display: flex;
     padding-left: 30%;
 }

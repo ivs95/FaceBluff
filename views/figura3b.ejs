@@ -4,13 +4,13 @@
 
 <head>
     <meta charset="utf-8" />
-    <link href="/css/figura3.css"  rel="stylesheet">
+    <link href="/css/figura3.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lobster+Two&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-        <%-include("headerConLogin", {puntuacion:puntuacion}) %>
+    <%-include("headerConLogin", {puntuacion:puntuacion}) %>
 
     <main>
         <div class="contenido">
@@ -20,16 +20,25 @@
 
             <div class="main">
                 <div class="fotoPerfil">
-                        <img class="fotoPerfil" src=<%="/users/imagen/"+usuario.idUsuario%>>
-                    </div>
+                    <img class="fotoPerfil" src=<%="/users/imagen/"+usuario.idUsuario%>>
+                </div>
                 <div class="DatosPerfil">
                     <p>Nombre: <%=usuario.nombre%></p>
                     <p>Edad: <%=usuario.edad%> años</p>
                     <p>Género: <%=usuario.genero%></p>
                     <p>Puntuacion: <%=usuario.puntuacion%></p>
                 </div>
+
             </div>
             <br>
+
+            <div class="imagenes">
+                <% listaFotos.forEach(function(element) { %>
+                <div class="imagen">
+                    <img class="fotoNormal" src=<%="/users/imagenNormal/"+element.imagen%>>
+                </div>
+                <% }); %>
+            </div>
         </div>
 
 

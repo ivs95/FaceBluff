@@ -86,9 +86,16 @@ a {
     text-decoration: none;
 }
 
-main a {
+.solicitarAmigo {
     background-color: black;
     color: white;
     border-radius: 5px;
     padding: 0 0.5em 0 0.5em;
+}
+
+.nombre{
+        background-color: brown;
+        color: white;
+        border-radius: 5px;
+        padding: 0 0.5em 0 0.5em;
 }

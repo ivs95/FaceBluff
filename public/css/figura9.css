@@ -26,9 +26,17 @@ header a {
     color: brown;
 }
 
-
-header h1 a{
+header h1 a {
     color: black;
+}
+
+.login {
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    padding: 0 0.5em 0 0.5em;
+    margin-right: 0.5em;
+    margin-left: 0.5em;
 }
 
 .titulo {
@@ -78,7 +86,7 @@ body {
     padding: 10% 20% 10% 20%;
 }
 
-.pregunta span{
+.pregunta span {
     padding-left: 2em;
 }
 

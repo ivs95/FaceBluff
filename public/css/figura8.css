@@ -84,8 +84,13 @@ body {
 }
 
 .otra {
+    display: flex;
+    width: 100%;
     background-color: rgb(116, 112, 66);
-    display: inline;
+}
+
+.otro{
+    margin-left: 3em;
 }
 
 a {
@@ -97,4 +102,13 @@ main a {
     color: white;
     border-radius: 5px;
     padding: 0 0.5em 0 0.5em;
+}
+
+.login {
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    padding: 0 0.5em 0 0.5em;
+    margin-right: 0.5em;
+    margin-left: 0.5em;
 }

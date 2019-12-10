@@ -131,7 +131,16 @@ routerUsers.get("/profile/:idUsuario", accessControl, function (request, respons
         else {
             let usuario = result;
             usuario.edad = ut.calculateAge(usuario.fecha);
-            response.render("figura3b", { puntuacion: request.session.currentUser.puntuacion, usuario: usuario });
+            let listaFotos = [];
+            daoI.readImagenesExtra(usuario.idUsuario, function cb_readExtraImg(err, result) {
+                if (err) {
+                    response.render("error500", { mensaje: err.message });
+                }
+                else {
+                    listaFotos = result;
+                    response.render("figura3b", { puntuacion: request.session.currentUser.puntuacion, usuario: usuario, listaFotos: listaFotos });
+                }
+            })
         }
     });
 

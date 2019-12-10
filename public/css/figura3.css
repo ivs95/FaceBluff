@@ -26,8 +26,7 @@ header a {
     color: brown;
 }
 
-
-header h1 a{
+header h1 a {
     color: black;
 }
 
@@ -62,8 +61,8 @@ body {
     background: #ffff99;
 }
 
-.botones{
-    display:flex;
+.botones {
+    display: flex;
 }
 
 .pagina {
@@ -84,14 +83,33 @@ img.fotoPerfil {
     height: 150px;
 }
 
-
 a {
     text-decoration: none;
 }
 
-main a {
+main .login {
     background-color: black;
     color: white;
     border-radius: 5px;
     padding: 0 0.5em 0 0.5em;
+    margin-right: 0.5em;
+    margin-left: 0.5em;
+}
+
+.imagenes {
+    margin-top: 2em;
+    display: flex;
+}
+
+.imagen {
+    border: solid 0.5px black;
+    margin-right: 0.1em;
+    width: 10em;
+    height: 10em;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
