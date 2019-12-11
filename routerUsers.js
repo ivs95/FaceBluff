@@ -62,7 +62,7 @@ routerUsers.get("/login", function (request, response) {
     let msg2 = request.session.validacionError;
     delete request.session.validacionError;
     response.status(200);
-    response.render("figura1", { errorMsg: msg, validacionError: msg2 });
+    response.render("figura1", { errorMsg: msg, errorMsg2: msg2 });
 });
 
 routerUsers.use(bodyParser.urlencoded({ extended: false }));
@@ -71,7 +71,7 @@ routerUsers.post("/login", [check('email').isEmail(), check('password').not().is
     var errors = validationResult(request).array();
     if (errors.length > 0) {
         request.session.validacionError = "Error de validacion";
-        response.redirect(/users/login);
+        response.redirect("/users/login");
     }
     else {
         let email = request.body.email;
@@ -336,7 +336,7 @@ routerUsers.get("/friends", function (request, response) {
                 }
                 else {
                     if (result.length > 0) {
-                        listaIds = [];
+                        let listaIds = [];
                         result.forEach(element => {
                             listaIds.push(element.idAmigo);
                         });

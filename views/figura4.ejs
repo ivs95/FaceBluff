@@ -16,7 +16,7 @@
         <div class="solicitudes bloque">
             <h2>Solicitudes de amistad</h2>
             <% listaSolicitudes.forEach(function(element) { %>
-            <div>
+            <div class = "amigo">
                 <img class="fotoAmigo uno" src=<%="/users/imagen/"+element.idUsuario%>>
                 <a href=<%="/users/profile/" +element.idUsuario %> class="nombre"><%= element.nombre %></a>
                 <a href=<%="/users/friends/add_friend/" +element.idUsuario %> class="aceptaAmigo">Aceptar</a>
@@ -38,7 +38,7 @@
             <h2>Mis amigos</h2>
 
             <% listaAmigos.forEach(function(element) { %>
-            <div>
+            <div class = "amigo">
                 <img class="fotoAmigo uno" src=<%="/users/imagen/"+element.idUsuario%>>
                 <a href=<%="/users/profile/" +element.idUsuario %> class="nombre"><%= element.nombre %></a>
             </div>
@@ -48,9 +48,6 @@
 
         <div class="Mensaje">
             <p><%=mensaje%></p>
-        </div>
-        <div class="error">
-            <p><%=mensajeError%></p>
         </div>
     </main>
 </body>

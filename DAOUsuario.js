@@ -10,7 +10,6 @@ class DAOUsuario {
     createUser(usuario, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
@@ -33,7 +32,6 @@ class DAOUsuario {
     updateUser(usuario,id, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
@@ -73,10 +71,6 @@ class DAOUsuario {
                        callback(err);
                     }
                     else if (resultado) {
-                        resultado.forEach(element => {
-                            console.log(element);
-                        });
-                        console.log("El resultado es " + resultado)
                         callback(null, resultado);
                     }
                     else {
@@ -91,7 +85,6 @@ class DAOUsuario {
     updatePuntuacion(id,puntuacion, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
@@ -113,7 +106,6 @@ class DAOUsuario {
     readByEmail(email, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
@@ -138,7 +130,6 @@ class DAOUsuario {
     readByName(name, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
@@ -186,7 +177,6 @@ class DAOUsuario {
     returnNameWithID(name, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
@@ -216,7 +206,6 @@ class DAOUsuario {
     increasePoints(id, puntuacion, callback) {
         this.pool.getConnection(function (err, conexion) {
             if (err) {
-                console.log(err);
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {

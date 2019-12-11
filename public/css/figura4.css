@@ -87,8 +87,8 @@ body {
 }
 
 .bloque img {
-    width: 8%;
-    height: 8%;
+    width: 5em;
+    height: 5em;
     padding-left: 5%;
 }
 
@@ -112,8 +112,9 @@ body {
     white-space: pre;
 }
 
+
 .amigos img {
-    padding-right: 8%;
+    padding-right: 25%;
 }
 
 a {

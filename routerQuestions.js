@@ -112,7 +112,7 @@ routerQuestions.get("/selected/:idPregunta", accessControl, function (request, r
                                                     response.render("error500", { mensaje: err.message });
                                                 } else {
                                                     listaAmigosQueHasAdivinado = result;
-                                                    listaAmigosFinal = [];
+                                                    let listaAmigosFinal = [];
                                                     listaAmigosQueHasAdivinado.forEach(function (element1) {
                                                         listaAmigosQueHanRespondido.forEach(function (element2) {
                                                             if (element2.idUsuario == element1.idAmigo) {
@@ -173,7 +173,9 @@ routerQuestions.get("/answer/:idPregunta", accessControl, function (request, res
                         respuestas.push(element)
                     });
                     response.status(200);
-                    response.render("figura8.ejs", { puntuacion: request.session.currentUser.puntuacion, pregunta: pregunta, respuestas: respuestas });
+                    let mensaje = request.session.validacionError;
+                    delete request.session.validacionError;
+                    response.render("figura8.ejs", { mensaje: mensaje, puntuacion: request.session.currentUser.puntuacion, pregunta: pregunta, respuestas: respuestas });
                 }
 
             })
@@ -189,7 +191,7 @@ routerQuestions.post("/answer/:idPregunta", [check('seleccion').custom(seleccion
     var errors = validationResult(request).array();
     if (errors.length > 0) {
         request.session.validacionError = "Error de validacion";
-        response.redirect("/question/answer/"+request.params.idPregunta);
+        response.redirect("/question/answer/" + request.params.idPregunta);
     }
     else {
         var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
@@ -235,7 +237,7 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
                                     respuestas.push(respuestaDelAmigo.respuesta);
                                     respuestas.sort(() => Math.random() - 0.5);
                                     response.status(200);
-                                    mensaje = request.session.validacionError;
+                                    let mensaje = request.session.validacionError;
                                     delete request.session.validacionError;
                                     response.render("figura9.ejs", { mensaje: mensaje, puntuacion: request.session.currentUser.puntuacion, pregunta: pregunta, respuestas: respuestas, amigo: amigo });
                                 }
@@ -248,11 +250,11 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
     });
 });
 
-routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", [check('respuestaElegida').custom(respuestaElegida => { if (respuestaElegida === undefined) return false; else return true; })], accessControl, function (request, response) {
+routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", [check('seleccion').custom(seleccion => { if (seleccion == null) { return false ;} else { return true; } })], accessControl, function (request, response) {
     var errors = validationResult(request).array();
     if (errors.length > 0) {
         request.session.validacionError = "Error de validacion";
-        response.redirect("/question/answerToOther/"+request.params.idPregunta+"/"+request.params.idAmigo);
+        response.redirect("/question/answerToOther/" + request.params.idPregunta + "/" + request.params.idAmigo);
     }
     else {
         var respuestaElegida = request.body.seleccion;
@@ -297,9 +299,9 @@ routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", [check('respuestaEle
 
 routerQuestions.get("/create", accessControl, function (request, response) {
     response.status(200);
-    mensaje = request.session.validacionError;
+    let mensaje = request.session.validacionError;
     delete request.session.validacionError;
-    response.render("figura10", { mensaje:mensaje, puntuacion: request.session.currentUser.puntuacion });
+    response.render("figura10", { mensaje: mensaje, puntuacion: request.session.currentUser.puntuacion });
 });
 
 
