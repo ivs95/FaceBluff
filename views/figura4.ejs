@@ -10,7 +10,7 @@
 
 <body>
 
-        <%-include("headerConLogin", {puntuacion:puntuacion}) %>
+    <%-include("headerConLogin", {puntuacion:puntuacion}) %>
 
     <main>
         <div class="solicitudes bloque">
@@ -18,7 +18,7 @@
             <% listaSolicitudes.forEach(function(element) { %>
             <div>
                 <img class="fotoAmigo uno" src=<%="/users/imagen/"+element.idUsuario%>>
-                <a href=<%="/users/profile/" +element.idUsuario %> class = "nombre"><%= element.nombre %></a>
+                <a href=<%="/users/profile/" +element.idUsuario %> class="nombre"><%= element.nombre %></a>
                 <a href=<%="/users/friends/add_friend/" +element.idUsuario %> class="aceptaAmigo">Aceptar</a>
                 <a href=<%="/users/friends/refuse_friend/" +element.idUsuario %> class="rechazaAmigo">Rechazar</a>
             </div>
@@ -40,7 +40,7 @@
             <% listaAmigos.forEach(function(element) { %>
             <div>
                 <img class="fotoAmigo uno" src=<%="/users/imagen/"+element.idUsuario%>>
-                <a href=<%="/users/profile/" +element.idUsuario %> class = "nombre"><%= element.nombre %></a>
+                <a href=<%="/users/profile/" +element.idUsuario %> class="nombre"><%= element.nombre %></a>
             </div>
             <% }); %>
 
@@ -48,6 +48,9 @@
 
         <div class="Mensaje">
             <p><%=mensaje%></p>
+        </div>
+        <div class="error">
+            <p><%=mensajeError%></p>
         </div>
     </main>
 </body>

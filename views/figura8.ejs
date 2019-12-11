@@ -10,7 +10,7 @@
 
 <body>
 
-        <%-include("headerConLogin", {puntuacion:puntuacion}) %>
+    <%-include("headerConLogin", {puntuacion:puntuacion}) %>
 
     <main>
         <div class="contenido">
@@ -20,29 +20,28 @@
 
             <div class="main">
 
-                <form method="POST" action= <%="/question/answer/" +pregunta.idPregunta %>>
+                <form method="POST" action=<%="/question/answer/" +pregunta.idPregunta %>>
                     <% respuestas.forEach(function(element) { %>
                     <section class="pregunta">
-                      
-                        <input type="radio"  name="seleccion" value="<%= element.respuesta %>"> <span> <%= element.respuesta %></span>
-                       
+
+                        <input type="radio" name="seleccion" value="<%= element.respuesta %>"> <span>
+                            <%= element.respuesta %></span>
+
                     </section>
-                     <% }); %>
+                    <% }); %>
                     <section class="pregunta otra">
-                        <br/>
-                        <input type="radio" name="seleccion" value ="otro" > <span> Otra: </span>
+                        <br />
+                        <input type="radio" name="seleccion" value="otro"> <span> Otra: </span>
                         <input type="text" name="seleccionText" class="otro" value="Introduce tu respuesta">
                     </section>
-                    <input type="submit" value="Responder" class = "login">
+                    <input type="submit" value="Responder" class="login">
                 </form>
             </div>
         </div>
-
-
+        <div class="error">
+            <p><%=mensaje%></p>
         </div>
-
     </main>
 </body>
 
 </html>
-

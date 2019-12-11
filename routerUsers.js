@@ -1,4 +1,4 @@
-
+"use strict";
 
 const DAOUsuarios = require("./DAOUsuario");
 const DAOPreguntas = require("./DAOPreguntas");
@@ -34,6 +34,7 @@ function accessControl(request, response, next) {
     if (request.session.currentUser != null) {
         daoU.isUserCorrect(request.session.currentUser.email, request.session.currentUser.contraseña, function cB_isUserCorrect(err, result) {
             if (err) {
+                response.status(500);
                 response.render("error500", { mensaje: err.message });
             }
             else if (result == false) {
@@ -58,19 +59,19 @@ routerUsers.get("/login", function (request, response) {
     delete request.session.currentUser;
     let msg = request.session.errorMsg;
     delete request.session.errorMsg;
-    response.render("figura1", { errorMsg: msg });
+    let msg2 = request.session.validacionError;
+    delete request.session.validacionError;
+    response.status(200);
+    response.render("figura1", { errorMsg: msg, validacionError: msg2 });
 });
 
 routerUsers.use(bodyParser.urlencoded({ extended: false }));
 
-
-
-
-
 routerUsers.post("/login", [check('email').isEmail(), check('password').not().isEmpty()], (request, response) => {
     var errors = validationResult(request).array();
     if (errors.length > 0) {
-        response.render("error500", { mensaje: "Error de validacion" });
+        request.session.validacionError = "Error de validacion";
+        response.redirect(/users/login);
     }
     else {
         let email = request.body.email;
@@ -78,6 +79,7 @@ routerUsers.post("/login", [check('email').isEmail(), check('password').not().is
 
         daoU.isUserCorrect(email, password, function cB_isUserCorrect(err, result) {
             if (err) {
+                response.status(500);
                 response.render("error500", { mensaje: err.message });
             }
             else if (result == false) {
@@ -99,6 +101,7 @@ routerUsers.get("/my_profile", accessControl, function (request, response) {
     delete request.session.mensajePerfil;
     daoU.readById(request.session.currentUser.idUsuario, function cb_readById(err, result) {
         if (err) {
+            response.status(500);
             response.render("error500", { mensaje: err.message });
         }
         else {
@@ -107,10 +110,12 @@ routerUsers.get("/my_profile", accessControl, function (request, response) {
             let listaFotos = [];
             daoI.readImagenesExtra(usuario.idUsuario, function cb_readExtraImg(err, result) {
                 if (err) {
+                    response.status(500);
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
                     listaFotos = result;
+                    response.status(200);
                     response.render("figura3", { puntuacion: request.session.currentUser.puntuacion, usuario: request.session.currentUser, listaFotos: listaFotos, mensaje: mensaje });
                 }
             })
@@ -125,6 +130,7 @@ routerUsers.get("/my_profile", accessControl, function (request, response) {
 routerUsers.get("/profile/:idUsuario", accessControl, function (request, response) {
     daoU.readById(request.params.idUsuario, function cb_readById(err, result) {
         if (err) {
+            response.status(500);
             response.render("error500", { mensaje: err.message });
         }
         else {
@@ -133,10 +139,12 @@ routerUsers.get("/profile/:idUsuario", accessControl, function (request, respons
             let listaFotos = [];
             daoI.readImagenesExtra(usuario.idUsuario, function cb_readExtraImg(err, result) {
                 if (err) {
+                    response.status(500);
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
                     listaFotos = result;
+                    response.status(200);
                     response.render("figura3b", { puntuacion: request.session.currentUser.puntuacion, usuario: usuario, listaFotos: listaFotos });
                 }
             })
@@ -146,19 +154,22 @@ routerUsers.get("/profile/:idUsuario", accessControl, function (request, respons
 });
 
 routerUsers.get("/update_user", accessControl, function (request, response) {
-    console.log(request.session.currentUser);
-    response.render("figura11", { puntuacion: request.session.currentUser.puntuacion, usuario: request.session.currentUser })
+    let mensaje = request.session.validacionError;
+    delete request.session.validacionError;
+    response.render("figura11", { mensaje:mensaje, puntuacion: request.session.currentUser.puntuacion, usuario: request.session.currentUser })
 });
 
 routerUsers.post("/update_user", multerFactory.single("foto"), [check('email').isEmail(), check('password').not().isEmpty(), check('nombre').not().isEmpty(), check('sexo').notEmpty()], accessControl, (request, response) => {
     var errors = validationResult(request).array();
     if (errors.length > 0) {
-        response.render("error500", { mensaje: "Error de validacion" });
+        request.session.validacionError = "Error de validacion";
+        response.redirect("/users/update_user")
     }
     else {
         var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
         daoU.updateUser(usuario, request.session.currentUser.idUsuario, function cb_updateUser(err, result) {
             if (err) {
+                response.status(500);
                 response.render("error500", { mensaje: err.message });
             }
             else if (result != null) {
@@ -166,10 +177,11 @@ routerUsers.post("/update_user", multerFactory.single("foto"), [check('email').i
                 if (request.file) {
                     daoI.updateImagenPerfil(request.file.filename, request.session.idUsuario, function cb_insertImagen(err) {
                         if (err) {
+                            response.status(500);
                             response.render("error500", { mensaje: err.message });
                         }
                         else {
-                            request.session.mensajePerfil = "Modificación del perfil realizada con éxito"
+                            request.session.mensajePerfil = "Modificación del perfil realizada con éxito";
                             response.redirect("/users/my_profile");
                         }
                     });
@@ -185,16 +197,17 @@ routerUsers.post("/update_user", multerFactory.single("foto"), [check('email').i
 
 
 routerUsers.post("/upload_img", accessControl, multerFactory.single("foto"), function (request, response) {
-
     if (request.file) {
         if (request.session.currentUser.puntuacion >= 100) {
             daoI.insertImagenExtra(request.file.filename, request.session.currentUser.idUsuario, function cb_insertImagen(err) {
                 if (err) {
+                    response.status(500);
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
                     daoU.updatePuntuacion(request.session.currentUser.idUsuario, request.session.currentUser.puntuacion - 100, function cb_updatePuntuacion(err) {
                         if (err) {
+                            response.status(500);
                             response.render("error500", { mensaje: err.message });
                         }
                         else {
@@ -221,7 +234,10 @@ routerUsers.post("/upload_img", accessControl, multerFactory.single("foto"), fun
 
 
 routerUsers.get("/new_user", function (request, response) {
-    response.render("figura2")
+    response.status(200);
+    let msg = request.session.validacionError;
+    delete request.session.validacionError;
+    response.render("figura2", {mensaje:msg})
 });
 
 routerUsers.get("/imagenNormal/:ruta", function (request, response) {
@@ -231,12 +247,15 @@ routerUsers.get("/imagenNormal/:ruta", function (request, response) {
 routerUsers.get("/imagen/:idUsuario", function (request, response) {
     daoI.readImagenPerfil(request.params.idUsuario, function cb_readImagenPerfil(err, resultado) {
         if (err) {
-            response.render("error500", { mensaje: err.message })
+            response.status(500);
+            response.render("error500", { mensaje: err.message });
         }
         else if (resultado == null) {
+            response.status(200);
             response.sendFile(path.join(__dirname, "public", "img", "imagenPorDefecto.jpg"));
         }
         else {
+            response.status(200);
             response.sendFile(path.join(__dirname, "public", "img", resultado.imagen));
         }
     });
@@ -245,18 +264,21 @@ routerUsers.get("/imagen/:idUsuario", function (request, response) {
 routerUsers.post("/new_user", multerFactory.single("foto"), [check('email').isEmail(), check('password').not().isEmpty(), check('nombre').not().isEmpty(), check('sexo').not().isEmpty()], (request, response) => {
     var errors = validationResult(request).array();
     if (errors.length > 0) {
-        response.render("error500", { mensaje: "Error de validacion" });
+        request.session.validacionError = "Error de validacion";
+        response.redirect("/users/new_user");
     }
     else {
         var usuario = ut.createUsuario(request.body.email, request.body.password, request.body.nombre, request.body.sexo, request.body.fecha);
         daoU.createUser(usuario, function cb_crearUsuario(err, resultado) {
             if (err) {
+                response.status(500);
                 response.render("error500", { mensaje: err.message });
             }
             else {
                 if (request.file) {
                     daoI.insertImagenPerfil(request.file.filename, resultado, function cb_insertImagen(err) {
                         if (err) {
+                            response.status(500);
                             response.render("error500", { mensaje: err.message });
                         }
                         else {
@@ -277,9 +299,11 @@ routerUsers.post("/search", function (request, response) {
     let caracteres = request.body.busqueda;
     daoU.usersWithCharInName(request.session.currentUser.idUsuario, caracteres, function cb_usersFindChar(err, result) {
         if (err) {
+            response.status(500);
             response.render("error500", { mensaje: err.message });
         }
         else {
+            response.status(200);
             response.render("figura5", { puntuacion: request.session.currentUser.puntuacion, usuarios: result });
         }
     });
@@ -292,9 +316,9 @@ routerUsers.get("/friends", function (request, response) {
     let listaAmigos = [];
     let mensaje = request.session.mensajePeticion;
     delete request.session.mensajePeticion;
-
     daoA.readPeticionesByUser(usuario.idUsuario, function cb_readPeticionesByUser(err, result) {
         if (err) {
+            response.status(500);
             response.render("error500", { mensaje: err.message });
         }
         else {
@@ -307,6 +331,7 @@ routerUsers.get("/friends", function (request, response) {
             });
             daoA.readAmigosByUser(usuario.idUsuario, function cb_readAmigosByUser(err, result) {
                 if (err) {
+                    response.status(500);
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
@@ -317,17 +342,19 @@ routerUsers.get("/friends", function (request, response) {
                         });
                         daoU.readListaUsuarios(listaIds, function cb_readListaUsuarios(err, result) {
                             if (err) {
+                                response.status(500);
                                 response.render("error500", { mensaje: err.message });
-
                             }
                             else {
                                 listaAmigos = result;
+                                response.status(200);
                                 response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
 
                             }
                         });
                     }
                     else {
+                        response.status(200);
                         response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
                     }
                 }
@@ -338,15 +365,16 @@ routerUsers.get("/friends", function (request, response) {
 });
 
 routerUsers.get("/friends/request_friend/:idUsuario", function (request, response) {
-
     daoA.isAmigo(request.session.currentUser.idUsuario, request.params.idUsuario, function cb_isAmigo(err, result) {
         if (err) {
+            response.status(500);
             response.render("error500", { mensaje: err.message });
         }
         else {
             if (result != true) {
                 daoA.existePeticion(request.session.currentUser.idUsuario, request.params.idUsuario, function cb_existePeticion(err, result) {
                     if (err) {
+                        response.status(500);
                         response.render("error500", { mensaje: err.message });
                     }
                     else if (result == null) {
@@ -375,15 +403,15 @@ routerUsers.get("/friends/request_friend/:idUsuario", function (request, respons
 });
 
 routerUsers.get("/friends/add_friend/:idUsuario", function (request, response) {
-    //Leer variable taskList con dao del usuario que se ha registrado
-
     daoA.deletePeticion(request.params.idUsuario, request.session.currentUser.idUsuario, function cb_deletePeticion(err) {
         if (err) {
+            response.status(500);
             response.render("error500", { mensaje: err.message });
         }
         else {
             daoA.addFriend(request.session.currentUser.idUsuario, request.params.idUsuario, function cb_addFriend(err) {
                 if (err) {
+                    response.status(500);
                     response.render("error500", { mensaje: err.message });
                 }
                 else {
@@ -400,6 +428,7 @@ routerUsers.get("/friends/refuse_friend/:idUsuario", function (request, response
     //Leer variable taskList con dao del usuario que se ha registrado
     daoA.deletePeticion(request.params.idUsuario, request.session.currentUser.idUsuario, function cb_deletePeticion(err) {
         if (err) {
+            response.status(500);
             response.render("error500", { mensaje: err.message });
         }
         else {
