@@ -311,17 +311,20 @@ routerUsers.get("/friends", function (request, response) {
                 }
                 else {
                     if (result.length > 0) {
-                        result.forEach((element, index, array) => {
-                            daoU.readById(element.idAmigo, function cb_readByID(err, resultado) {
-                                if (err) {
-                                    response.render("error500", { mensaje: err.message });
-                                }
-                                else {
-                                    listaAmigos.push(resultado);
-                                    if (index == (array.length - 1))
-                                        response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
-                                }
-                            })
+                        listaIds = [];
+                        result.forEach(element => {
+                            listaIds.push(element.idAmigo);
+                        });
+                        daoU.readListaUsuarios(listaIds, function cb_readListaUsuarios(err, result) {
+                            if (err) {
+                                response.render("error500", { mensaje: err.message });
+
+                            }
+                            else {
+                                listaAmigos = result;
+                                response.render("figura4", { puntuacion: usuario.puntuacion, listaSolicitudes: listaPeticiones, listaAmigos: listaAmigos, mensaje: mensaje });
+
+                            }
                         });
                     }
                     else {

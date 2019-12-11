@@ -67,8 +67,8 @@ class DAOUsuario {
                 callback(new Error("Error de conexión a la base de datos"));
             }
             else {
-                let sql = "SELECT * FROM usuarios WHERE idUsuario IN ( " + "?" +" )" ;
-                conexion.query(sql, listaIds, function (err, resultado) {
+                let sql = "SELECT * FROM usuarios WHERE idUsuario IN ( " + listaIds +" );" ;
+                conexion.query(sql, function (err, resultado) {
                     if (err) {
                        callback(err);
                     }

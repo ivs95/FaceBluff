@@ -35,7 +35,6 @@ function accessControl(request, response, next) {
 
 
     if (request.session.currentUser != null) {
-        console.log(request.session.currentUser.email);
         daoU.isUserCorrect(request.session.currentUser.email, request.session.currentUser.contraseña, function cB_isUserCorrect(err, result) {
             if (err) {
                 response.render("error500", { mensaje: err.message });
@@ -200,18 +199,26 @@ routerQuestions.get("/answer/:idPregunta", accessControl, function (request, res
     });
 
 });
-routerQuestions.post("/answer/:idPregunta", [check('seleccion').not().isEmpty()], accessControl, function (request, response) {
+routerQuestions.post("/answer/:idPregunta", [check('seleccion').custom(seleccion => {
+    if (seleccion == null) { return false; } else { return true; }
+})], accessControl, function (request, response) {
     //Leer variable taskList con dao del usuario que se ha registrado
-    var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
+    var errors = validationResult(request).array();
+    if (errors.length > 0) {
+        response.render("error500", { mensaje: "Error de validacion" });
+    }
+    else {
+        var respuestaElegida = ut.getRespuesta(request.body.seleccion, request.body.seleccionText);
 
-    //If value == otro coger el valor del textArea
-    daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.currentUser.idUsuario, function cb_responderPregunta(err) {
-        if (err) {
-            response.render("error500", { mensaje: err.message });
-        } else {
-            response.redirect("/question/selected/" + request.params.idPregunta);
-        }
-    });
+        //If value == otro coger el valor del textArea
+        daoP.responderPregunta(respuestaElegida, request.params.idPregunta, request.session.currentUser.idUsuario, function cb_responderPregunta(err) {
+            if (err) {
+                response.render("error500", { mensaje: err.message });
+            } else {
+                response.redirect("/question/selected/" + request.params.idPregunta);
+            }
+        });
+    }
 });
 
 routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, function (request, response) {
@@ -236,19 +243,14 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
                         } else {
 
                             var respuestaDelAmigo = result[0];
-
-                            console.log(pregunta.numRespuestasInicial);
                             daoP.readRespuestasIncorrectas(request.params.idPregunta, respuestaDelAmigo.respuesta, (pregunta.numRespuestasInicial - 1), function cb_readRespuestasIncorrectas(err, result) {
                                 if (err) {
                                     console.log(err.message);
                                 } else {
                                     let respuestas = [];
-                                    console.log(result);
                                     result.forEach(function (element) {
                                         respuestas.push(element.respuesta)
                                     });
-                                    console.log(respuestas);
-                                    console.log(respuestaDelAmigo);
                                     respuestas.push(respuestaDelAmigo.respuesta);
                                     respuestas.sort(() => Math.random() - 0.5);
 
@@ -269,55 +271,54 @@ routerQuestions.get("/answerToOther/:idPregunta/:idAmigo", accessControl, functi
     });
 });
 
-routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", [check('respuestaElegida').not().isEmpty()], accessControl, function (request, response) {
-    var respuestaElegida = request.body.seleccion;
-    console.log(respuestaElegida);
-    var acertada = 0;
-    daoP.readRespuestaCorrecta(request.params.idPregunta, request.params.idAmigo, function cb_readRespuestaCorrecta(err, result) {
-        if (err) {
-            console.log(err.message);
-        } else {
-            var respuestaCorrecta = result[0];
-
-            if (respuestaCorrecta.respuesta.trim() == respuestaElegida.trim()) {
-
-                //actailziar puntuacion
-                console.log("entro entro")
-
-                acertada = 1;
-                daoU.updatePuntuacion(request.session.currentUser.idUsuario, (request.session.currentUser.puntuacion + 50), function cb_increasePoints(err) {
-                    if (err) {
-                        console.log(err.message);
-                    } else {
-                        console.log(request.session.currentUser.puntuacion);
-                        request.session.currentUser.puntuacion += 50;
-                        console.log(request.session.currentUser.puntuacion);
-                        daoP.insertPreguntaAmigoRespondida(request.session.currentUser.idUsuario, request.params.idAmigo, request.params.idPregunta, acertada, function cb_insertPreguntaAmigoRespondida(err, result) {
-                            if (err) {
-                                console.log(err.message);
-                            } else response.redirect("/question/selected/" + request.params.idPregunta);
-
-                        });
-
-                    }
-
-
-                });
-
-
+routerQuestions.post("/answerToOther/:idPregunta/:idAmigo", [check('respuestaElegida').custom(respuestaElegida => { if (respuestaElegida === undefined) return false; else return true; })], accessControl, function (request, response) {
+    var errors = validationResult(request).array();
+    if (errors.length > 0) {
+        response.render("error500", { mensaje: "Error de validacion" });
+    }
+    else {
+        var respuestaElegida = request.body.seleccion;
+        var acertada = 0;
+        daoP.readRespuestaCorrecta(request.params.idPregunta, request.params.idAmigo, function cb_readRespuestaCorrecta(err, result) {
+            if (err) {
+                console.log(err.message);
             } else {
-                daoP.insertPreguntaAmigoRespondida(request.session.currentUser.idUsuario, request.params.idAmigo, request.params.idPregunta, acertada, function cb_insertPreguntaAmigoRespondida(err, result) {
-                    if (err) {
-                        console.log(err.message);
-                    } else response.redirect("/question/selected/" + request.params.idPregunta);
+                var respuestaCorrecta = result[0];
 
-                });
+                if (respuestaCorrecta.respuesta.trim() == respuestaElegida.trim()) {
+                    acertada = 1;
+                    daoU.updatePuntuacion(request.session.currentUser.idUsuario, (request.session.currentUser.puntuacion + 50), function cb_increasePoints(err) {
+                        if (err) {
+                            console.log(err.message);
+                        } else {
+                            request.session.currentUser.puntuacion += 50;
+                            daoP.insertPreguntaAmigoRespondida(request.session.currentUser.idUsuario, request.params.idAmigo, request.params.idPregunta, acertada, function cb_insertPreguntaAmigoRespondida(err, result) {
+                                if (err) {
+                                    console.log(err.message);
+                                } else response.redirect("/question/selected/" + request.params.idPregunta);
+
+                            });
+
+                        }
+
+
+                    });
+
+
+                } else {
+                    daoP.insertPreguntaAmigoRespondida(request.session.currentUser.idUsuario, request.params.idAmigo, request.params.idPregunta, acertada, function cb_insertPreguntaAmigoRespondida(err, result) {
+                        if (err) {
+                            console.log(err.message);
+                        } else response.redirect("/question/selected/" + request.params.idPregunta);
+
+                    });
+                }
             }
-        }
-    });
-    //Coger la respuesta del radioButton, comparar si es correcta
-    //Crear la notificacion correspondiente, mostrada por defecto se pone a 0
-    //Aumentar la puntuacion del usuario si ha acertado
+        });
+        //Coger la respuesta del radioButton, comparar si es correcta
+        //Crear la notificacion correspondiente, mostrada por defecto se pone a 0
+        //Aumentar la puntuacion del usuario si ha acertado
+    }
 });
 
 //
@@ -329,7 +330,16 @@ routerQuestions.get("/create", accessControl, function (request, response) {
 });
 
 
-routerQuestions.post("/create", [check('enunciado').not().isEmpty(), check('respuestas').custom(respuestas => { if (respuestas.split("\n").length > 1) return true; return false; })], accessControl, function (request, response) {
+routerQuestions.post("/create", [check('enunciado').not().isEmpty(), check('respuestas').custom(respuestas => {
+    if (respuestas.split("\n").length > 1) {
+        let retorno = true;
+        respuestas.split("\n").forEach(element => {
+            if (element.length < 2)
+                retorno = false;
+        }); return retorno;
+    }
+    return false;
+})], accessControl, function (request, response) {
 
     var errors = validationResult(request).array();
     if (errors.length > 0) {
@@ -337,17 +347,13 @@ routerQuestions.post("/create", [check('enunciado').not().isEmpty(), check('resp
     }
     else {
         let enunciado = request.body.enunciado;
-        console.log(request.body.enunciado);
-
         let respuestas = request.body.respuestas.split("\n");
 
         let pregunta = ut.createPregunta(enunciado, respuestas.length);
-        console.log(pregunta);
         daoP.createPregunta(pregunta, function cb_createPregunta(err, result) {
             if (err) {
                 response.render("error500", { mensaje: err.message });
             } else {
-                console.log(result);
                 respuestas.forEach(element => {
                     daoP.añadirRespuestaPregunta(result, element, function cb_inserRespuestas(err) {
                         if (err) {
